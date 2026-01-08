@@ -1,6 +1,6 @@
 # Crystal Bird
 
-GPGPU Particles -> Flowfield Animation -> Unreal Bloom -> Chromatic Aberration -> Film Grain
+GPGPU Particles -> Flowfield Animation -> Unreal Bloom -> Chromatic Aberration -> Film Grain -> Motion Blur -> Barrel Distortion
 
 <img width="100%" height="100%" src="./preview.png" />
 

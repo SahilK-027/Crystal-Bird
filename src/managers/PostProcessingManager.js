@@ -29,7 +29,7 @@ export class PostProcessingManager {
 
     this.bloomPass = new UnrealBloomPass(
       new THREE.Vector2(this.sizes.width, this.sizes.height),
-      0.2,
+      0.1,
       1.0,
       0.8
     );

@@ -11,6 +11,7 @@ import { CloudBackground } from './environment/CloudBackground.js';
 import { GUIManager } from './gui/GUIManager.js';
 import { PerformanceMonitor } from './debug/PerformanceMonitor.js';
 import { AudioManager } from './managers/AudioManager.js';
+import { SlowmoEffect } from './effects/SlowmoEffect.js';
 
 export class Application {
   constructor() {
@@ -18,6 +19,7 @@ export class Application {
     this.clock = new THREE.Clock();
     this.lastTime = 0;
     this.isStarted = false;
+    this.slowmoEffect = null;
 
     this.init();
   }
@@ -91,21 +93,30 @@ export class Application {
     }
     
     const elapsedTime = this.clock.getElapsedTime();
-    const deltaTime = elapsedTime - this.lastTime;
+    let deltaTime = elapsedTime - this.lastTime;
     this.lastTime = elapsedTime;
 
-    // Update systems
+    // Update slowmo effect and get time scale
+    let timeScale = 1.0;
+    if (this.slowmoEffect) {
+      timeScale = this.slowmoEffect.update(deltaTime);
+    }
+
+    // Apply time scale to delta time for all animations
+    const scaledDelta = deltaTime * timeScale;
+
+    // Update systems with scaled time
     this.mouseManager.update();
     this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
     this.sparkleSystem.update(elapsedTime);
     this.crystallineBranches.update(elapsedTime);
-    this.cloudBackground.update(elapsedTime, deltaTime);
+    this.cloudBackground.update(elapsedTime, scaledDelta);
     this.postProcessing.update(elapsedTime, this.mouseManager.mouseVelocity);
-    this.sceneManager.update(this.mouseManager, deltaTime);
+    this.sceneManager.update(this.mouseManager, scaledDelta);
 
     const flowfieldSystem = this.modelLoader.getFlowfieldSystem();
     if (flowfieldSystem) {
-      flowfieldSystem.update(deltaTime, elapsedTime);
+      flowfieldSystem.update(scaledDelta, elapsedTime);
     }
 
     // Render frame
@@ -133,6 +144,15 @@ export class Application {
         this.audioManager.play();
       }, 100);
     }
+    
+    // Initialize slowmo effect after audio is ready
+    this.slowmoEffect = new SlowmoEffect({
+      composer: this.postProcessing.composer,
+      camera: this.sceneManager.camera,
+      audio: this.audioManager.audio,
+      renderer: this.sceneManager.renderer,
+      chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
+    });
     
     // Animation loop is already running from preRenderFrame
   }

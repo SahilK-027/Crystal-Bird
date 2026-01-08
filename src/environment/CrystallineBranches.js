@@ -19,6 +19,8 @@ export class CrystallineBranches {
     this.createCrystals();
 
     this.mainGroup.position.set(0, 0, 0);
+    this.mainGroup.matrixAutoUpdate = false;
+    this.mainGroup.updateMatrix();
     this.scene.add(this.mainGroup);
   }
 
@@ -129,7 +131,7 @@ export class CrystallineBranches {
       const curve = new THREE.CatmullRomCurve3([startVec, midPoint, endVec]);
       const branchGeom = new THREE.TubeGeometry(
         curve,
-        16,
+        8,
         config.radius,
         6,
         false
@@ -240,7 +242,7 @@ export class CrystallineBranches {
     const curve = new THREE.CatmullRomCurve3([startVec, midPoint, endVec]);
     const branchGeom = new THREE.TubeGeometry(
       curve,
-      16,
+      8,
       params.radius,
       6,
       false

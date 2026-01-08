@@ -42,8 +42,6 @@ export class LoadingScreen {
     this.btnMusic.disabled = true;
     this.btnSilent.disabled = true;
     
-    console.log('🚀 Starting experience with music:', withMusic);
-    
     // Start fade out transition immediately
     this.container.classList.add('hidden');
     

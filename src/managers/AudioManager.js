@@ -50,13 +50,11 @@ export class AudioManager {
   }
 
   createMusicButton() {
-    // Remove existing button from HTML if present
     const existingBtn = document.getElementById('musicBtn');
     if (existingBtn) {
       existingBtn.remove();
     }
     
-    // Don't create duplicate buttons
     if (this.button) return;
     
     const button = document.createElement('button');
@@ -86,7 +84,6 @@ export class AudioManager {
     document.body.appendChild(button);
     this.button = button;
     
-    // Update button state if already playing
     if (this.isPlaying) {
       this.button.classList.add('playing');
     }

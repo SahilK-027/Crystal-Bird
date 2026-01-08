@@ -2,11 +2,9 @@ import { Pane } from 'tweakpane';
 
 export class GUIManager {
   constructor(shaderMaterial, postProcessing, flowfieldSystem, sparkleSystem) {
-    // Check if debug mode is enabled via URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     this.debugMode = urlParams.get('mode') === 'debug';
     
-    // Only create pane if debug mode is enabled
     if (this.debugMode) {
       this.pane = new Pane({ title: 'Controls', expanded: false });
     } else {

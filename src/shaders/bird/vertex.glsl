@@ -26,37 +26,28 @@ void main() {
     vNormal = normal;
     vPosition = position;
     vVertexColor = vertexColor;
-    // Subtle scaling effect
+
     float scale = uTriScale + sin(uTime * 0.5) * 0.02;
     vec3 pos = (position - center) * scale + center;
 
-    // Gentle wave effect
     float wave = sin(pos.y * 5.0 + uTime) * 0.005;
     pos.x += wave;
     pos.z += wave;
 
-    // Subtle noise-based displacement
     float noise = cnoise(vec4(pos * 2.0, uTime * 0.1)) * 0.01;
     pos += normal * noise;
 
-    // Mouse interaction effect
-    // Project vertex to clip space to compare with mouse in NDC
     vec4 clipPos = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
     vec2 ndcPos = clipPos.xy / clipPos.w;
     
-    // Calculate distance in screen space (NDC)
     vec2 mouseDelta2D = uMousePosition - ndcPos;
     float mouseDistance = length(mouseDelta2D);
     
-    // Influence falls off with distance - small radius, strong effect
     float mouseInfluence = smoothstep(0.15, 0.0, mouseDistance);
-    
-    // Transform push direction from view space to model space
-    // Get the inverse of the modelView rotation (ignore translation)
+
     mat3 normalMatrix = mat3(modelViewMatrix);
     mat3 invNormalMatrix = transpose(normalMatrix);
     
-    // Push in view-aligned direction, transformed back to model space
     vec3 viewPush = vec3(-mouseDelta2D, 0.0);
     vec3 modelPush = invNormalMatrix * viewPush;
     
@@ -68,9 +59,7 @@ void main() {
     vec3 posPixelated = floor(pos * uMosaic + 0.5) / uMosaic;
     pos += mix(pos, posPixelated, transformProgress);
 
-    // Calculate displacement for fragment shader
     vDisplacement = noise + mouseInfluence * 2.0;
 
-    // Apply model view projection matrix
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }

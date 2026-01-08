@@ -3,6 +3,6 @@ varying vec3 vPosition;
 
 void main() {
   vUv = uv;
-  vPosition = normalize(position); // Normalized direction for seamless 3D noise
+  vPosition = normalize(position);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }

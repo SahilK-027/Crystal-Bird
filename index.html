@@ -872,12 +872,12 @@
         }
 
         .slowmo-hud {
-          left: 24px;
+          left: 36px;
           top: 70px;
         }
 
         .slowmo-progress-container {
-          width: 160px;
+          width: 60px;
         }
 
         .content-container {
@@ -945,12 +945,12 @@
         }
 
         .slowmo-hud {
-          left: 20px;
-          top: 65px;
+          left: 32px;
+          top: 55px;
         }
 
         .slowmo-progress-container {
-          width: 140px;
+          width: 50px;
         }
 
         .content-container {
@@ -1019,13 +1019,8 @@
           font-size: 9px;
         }
 
-        .slowmo-hud {
-          left: 16px;
-          top: 60px;
-        }
-
         .slowmo-progress-container {
-          width: 120px;
+          width: 40px;
           height: 1.5px;
         }
 
@@ -1083,7 +1078,94 @@
         }
 
         .slowmo-progress-container {
-          width: 100px;
+          width: 30px;
+        }
+      }
+
+      /* Loading Screen Mobile Responsive */
+      @media (max-width: 768px) {
+        .crystal-loader-content {
+          gap: 48px;
+          padding: 0 24px;
+        }
+
+        .crystal-loader-progress {
+          width: 100%;
+          max-width: 320px;
+        }
+
+        .crystal-loader-buttons {
+          flex-direction: column;
+          gap: 12px;
+          width: 100%;
+          max-width: 280px;
+        }
+
+        .crystal-btn {
+          width: 100%;
+          justify-content: center;
+          padding: 14px 24px;
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .crystal-loader-content {
+          gap: 40px;
+          padding: 0 16px;
+        }
+
+        .crystal-loader-progress {
+          max-width: 280px;
+        }
+
+        .crystal-loader-progress-text {
+          font-size: 12px;
+          letter-spacing: 1.5px;
+        }
+
+        .crystal-loader-hint {
+          font-size: 9px;
+          letter-spacing: 1px;
+        }
+
+        .crystal-loader-buttons {
+          max-width: 240px;
+          gap: 10px;
+        }
+
+        .crystal-btn {
+          padding: 12px 20px;
+          font-size: 11px;
+          gap: 8px;
+        }
+
+        .crystal-btn-icon {
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .crystal-loader-content {
+          gap: 32px;
+        }
+
+        .crystal-loader-progress {
+          max-width: 240px;
+        }
+
+        .crystal-loader-progress-text {
+          font-size: 11px;
+          margin-top: 16px;
+        }
+
+        .crystal-loader-buttons {
+          max-width: 220px;
+        }
+
+        .crystal-btn {
+          padding: 11px 16px;
+          font-size: 10px;
         }
       }
     </style>

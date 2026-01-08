@@ -11,7 +11,7 @@ export class LoadingManager {
     this.withMusic = false;
     this.assetsLoaded = false;
     this.systemsReady = false;
-    
+
     this.setupLoadingScreen();
     this.setupCallbacks();
   }
@@ -19,12 +19,11 @@ export class LoadingManager {
   setupLoadingScreen() {
     this.loadingScreen = new LoadingScreen((withMusic) => {
       this.withMusic = withMusic;
-      // Hide the old loader if it exists
       const oldLoader = document.getElementById('loader');
       if (oldLoader) {
         oldLoader.style.display = 'none';
       }
-      
+
       if (this.onReady) {
         this.onReady(withMusic);
       }
@@ -62,18 +61,13 @@ export class LoadingManager {
   }
 
   setReady() {
-    // Called when all systems are initialized
     this.systemsReady = true;
     this.checkIfFullyReady();
   }
 
   checkIfFullyReady() {
-    // Only show buttons when both assets are loaded AND systems are ready
     if (this.assetsLoaded && this.systemsReady) {
-      console.log('✅ All assets and systems ready - showing explore buttons');
       this.loadingScreen.updateProgress(100);
-    } else {
-      console.log(`⏳ Waiting... Assets: ${this.assetsLoaded}, Systems: ${this.systemsReady}`);
     }
   }
 

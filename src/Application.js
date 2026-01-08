@@ -25,7 +25,6 @@ export class Application {
   }
 
   init() {
-    // Initialize scene and managers first
     this.sceneManager = new SceneManager(this.canvas);
     this.mouseManager = new MouseManager();
     this.shaderMaterialManager = new ShaderMaterialManager();
@@ -40,7 +39,6 @@ export class Application {
       this.sceneManager.sizes
     );
 
-    // Initialize loading manager with callback for when user clicks start
     this.loadingManager = new LoadingManager((withMusic) => {
       this.startExperience(withMusic);
     });
@@ -64,16 +62,13 @@ export class Application {
       this.guiManager.getPane()
     );
 
-    // Initialize audio manager (don't create button yet, but load audio)
     this.audioManager = new AudioManager(this.loadingManager.get(), false);
 
     this.modelLoader.load('/models/bird.glb', (flowfieldSystem) => {
-      console.log('🐦 Model loaded successfully');
       if (flowfieldSystem) {
         this.guiManager.addFlowfieldControls(flowfieldSystem);
       }
       
-      // Model loaded - now initialize everything else
       this.initializeAllSystems();
     });
 
@@ -82,24 +77,14 @@ export class Application {
 
     this.setupResizeHandler();
     
-    // Start rendering immediately but in paused state
     this.startPreRendering();
   }
 
-  initializeAllSystems() {
-    console.log('🔧 Starting system initialization...');
-    
-    // Initialize all heavy systems during loading phase
-    // Use multiple frames to avoid blocking
-    
-    // Frame 1: Create music button
+  initializeAllSystems() {    
     requestAnimationFrame(() => {
-      console.log('🎵 Creating music button...');
       this.audioManager.createMusicButton();
       
-      // Frame 2: Initialize slowmo effect
       requestAnimationFrame(() => {
-        console.log('⏱️ Initializing slowmo effect...');
         this.slowmoEffect = new SlowmoEffect({
           composer: this.postProcessing.composer,
           camera: this.sceneManager.camera,
@@ -108,12 +93,10 @@ export class Application {
           chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
         });
         
-        // Frame 3-6: Wait for slowmo to fully initialize (it now defers post-processing too)
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
-                console.log('✅ All systems initialized!');
                 this.loadingManager.setReady();
               });
             });
@@ -124,7 +107,6 @@ export class Application {
   }
 
   startPreRendering() {
-    // Start the animation loop immediately
     this.preRenderFrame();
   }
 
@@ -137,16 +119,13 @@ export class Application {
     let deltaTime = elapsedTime - this.lastTime;
     this.lastTime = elapsedTime;
 
-    // Update slowmo effect and get time scale
     let timeScale = 1.0;
     if (this.slowmoEffect) {
       timeScale = this.slowmoEffect.update(deltaTime);
     }
 
-    // Apply time scale to delta time for all animations
     const scaledDelta = deltaTime * timeScale;
 
-    // Update systems with scaled time
     this.mouseManager.update();
     this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
     this.sparkleSystem.update(elapsedTime);
@@ -160,33 +139,25 @@ export class Application {
       flowfieldSystem.update(scaledDelta, elapsedTime);
     }
 
-    // Render frame
     this.postProcessing.render();
     
     if (this.isStarted) {
       this.performanceMonitor.endFrame();
     }
 
-    // Continue animation loop
     window.requestAnimationFrame(() => this.preRenderFrame());
   }
 
   startExperience(withMusic) {
     if (this.isStarted) return;
-    
-    console.log('🎬 Experience starting...');
+
     this.isStarted = true;
     
-    // Start music in next frame to avoid blocking
     if (withMusic) {
       requestAnimationFrame(() => {
-        console.log('🎵 Starting audio playback...');
         this.audioManager.play();
       });
     }
-    
-    console.log('✅ Experience started successfully!');
-    // Animation loop is already running from preRenderFrame
   }
 
   setupResizeHandler() {

@@ -1,0 +1,113 @@
+import * as THREE from 'three';
+import { LoadingManager } from './managers/LoadingManager.js';
+import { SceneManager } from './managers/SceneManager.js';
+import { MouseManager } from './managers/MouseManager.js';
+import { ShaderMaterialManager } from './managers/ShaderMaterialManager.js';
+import { PostProcessingManager } from './managers/PostProcessingManager.js';
+import { ModelLoader } from './loaders/ModelLoader.js';
+import { SparkleParticleSystem } from './particles/SparkleParticleSystem.js';
+import { CrystallineBranches } from './environment/CrystallineBranches.js';
+import { CloudBackground } from './environment/CloudBackground.js';
+import { GUIManager } from './gui/GUIManager.js';
+import { PerformanceMonitor } from './debug/PerformanceMonitor.js';
+import { AudioManager } from './managers/AudioManager.js';
+
+export class Application {
+  constructor() {
+    this.canvas = document.querySelector('canvas.webgl');
+    this.clock = new THREE.Clock();
+    this.lastTime = 0;
+
+    this.init();
+  }
+
+  init() {
+    this.loadingManager = new LoadingManager();
+    this.sceneManager = new SceneManager(this.canvas);
+    this.mouseManager = new MouseManager();
+    this.shaderMaterialManager = new ShaderMaterialManager();
+    this.sparkleSystem = new SparkleParticleSystem(this.sceneManager.scene);
+    this.crystallineBranches = new CrystallineBranches(this.sceneManager.scene);
+    this.cloudBackground = new CloudBackground(this.sceneManager.scene);
+
+    this.postProcessing = new PostProcessingManager(
+      this.sceneManager.scene,
+      this.sceneManager.camera,
+      this.sceneManager.renderer,
+      this.sceneManager.sizes
+    );
+
+    this.modelLoader = new ModelLoader(
+      this.loadingManager.get(),
+      this.shaderMaterialManager.material,
+      this.sceneManager.scene,
+      this.sceneManager.renderer
+    );
+
+    this.guiManager = new GUIManager(
+      this.shaderMaterialManager,
+      this.postProcessing,
+      null,
+      this.sparkleSystem
+    );
+
+    this.performanceMonitor = new PerformanceMonitor(
+      this.sceneManager.renderer,
+      this.guiManager.getPane()
+    );
+
+    this.audioManager = new AudioManager(this.loadingManager.get());
+
+    this.modelLoader.load('/models/bird.glb', (flowfieldSystem) => {
+      if (flowfieldSystem) {
+        this.guiManager.addFlowfieldControls(flowfieldSystem);
+      }
+    });
+
+    this.guiManager.addTreeControls(this.crystallineBranches);
+    this.guiManager.addCloudControls(this.cloudBackground);
+
+    this.setupResizeHandler();
+    this.animate();
+  }
+
+  setupResizeHandler() {
+    const originalHandleResize = this.sceneManager.handleResize.bind(
+      this.sceneManager
+    );
+    this.sceneManager.handleResize = () => {
+      originalHandleResize();
+      this.postProcessing.handleResize(
+        this.sceneManager.sizes.width,
+        this.sceneManager.sizes.height
+      );
+    };
+  }
+
+  animate() {
+    this.performanceMonitor.beginFrame();
+
+    const elapsedTime = this.clock.getElapsedTime();
+    const deltaTime = elapsedTime - this.lastTime;
+    this.lastTime = elapsedTime;
+
+    this.mouseManager.update();
+    this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
+    this.sparkleSystem.update(elapsedTime);
+    this.crystallineBranches.update(elapsedTime);
+    this.cloudBackground.update(elapsedTime, deltaTime);
+    this.postProcessing.update(elapsedTime, this.mouseManager.mouseVelocity);
+    this.sceneManager.update(this.mouseManager, deltaTime);
+
+    const flowfieldSystem = this.modelLoader.getFlowfieldSystem();
+    if (flowfieldSystem) {
+      flowfieldSystem.update(deltaTime, elapsedTime);
+    }
+
+    this.postProcessing.render();
+
+    this.performanceMonitor.endFrame();
+
+    window.requestAnimationFrame(() => this.animate());
+  }
+}

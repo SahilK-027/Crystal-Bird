@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+      }
+
+      html,
+      body {
+        overflow: hidden;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          sans-serif;
+        background: #050810;
+        color: #ffffff;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .webgl {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        outline: none;
+        z-index: 0;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.4;
+      }
+
+      .loader {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #050810;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+      }
+
+      .loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loader-content {
+        text-align: center;
+      }
+
+      .loader-spinner {
+        width: 40px;
+        height: 40px;
+        border: 2px solid rgba(106, 183, 255, 0.1);
+        border-top-color: #6ab7ff;
+        border-radius: 50%;
+        animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loader-text {
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+      }
+
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 28px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        opacity: 0;
+        animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 400;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        letter-spacing: 0.3px;
+      }
+
+      .nav-link:hover {
+        color: rgba(255, 255, 255, 0.95);
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: rgba(106, 183, 255, 0.8);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .main-content {
+        position: fixed;
+        left: 40px;
+        bottom: 40px;
+        z-index: 100;
+        max-width: 380px;
+        opacity: 0;
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+      }
+
+      .main-content-2 {
+        position: fixed;
+        right: 40px;
+        bottom: 40px;
+        z-index: 100;
+        max-width: 380px;
+        opacity: 0;
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .tags {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        padding: 4px 12px;
+        background: rgba(106, 183, 255, 0.08);
+        border: 1px solid rgba(106, 183, 255, 0.15);
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        color: rgba(106, 183, 255, 0.9);
+        text-transform: uppercase;
+      }
+
+      .subtitle {
+        font-size: 15px;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 300;
+      }
+
+      .meta-info {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .meta-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+      }
+
+      .meta-value {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 400;
+      }
+
+      .meta-value a {
+        color: rgba(106, 183, 255, 0.9);
+        text-decoration: none;
+        transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .meta-value a:hover {
+        color: rgba(255, 255, 255, 0.95);
+      }
+
+      /* Music Button Styles */
+      .music-btn {
+        position: fixed;
+        left: 40px;
+        bottom: 180px;
+        z-index: 150;
+        width: 46px;
+        height: 46px;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.4s;
+      }
+
+      .music-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 0deg,
+          rgba(106, 183, 255, 0.9),
+          rgba(59, 130, 246, 0.9),
+          rgba(147, 197, 253, 0.9),
+          rgba(106, 183, 255, 0.9)
+        );
+        animation: rotate-glow 3s linear infinite;
+        filter: blur(2px);
+      }
+
+      .music-btn::after {
+        content: '';
+        position: absolute;
+        inset: 2px;
+        border-radius: 50%;
+        background: rgba(5, 8, 16, 0.95);
+        backdrop-filter: blur(12px);
+      }
+
+      @keyframes rotate-glow {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .music-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .music-btn:hover::before {
+        filter: blur(6px);
+        animation-duration: 1.5s;
+      }
+
+      .music-btn:active {
+        transform: scale(0.95);
+      }
+
+      .music-btn.playing::before {
+        animation: rotate-glow 2s linear infinite,
+          pulse-glow 1s ease-in-out infinite alternate;
+      }
+
+      @keyframes pulse-glow {
+        from {
+          filter: blur(3px) brightness(1);
+        }
+        to {
+          filter: blur(8px) brightness(1.3);
+        }
+      }
+
+      .music-btn-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      .music-bars {
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 3px;
+        height: 16px;
+      }
+
+      .music-btn.playing .music-bars {
+        display: flex;
+      }
+
+      .music-btn.playing .play-icon {
+        display: none;
+      }
+
+      .play-icon {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        filter: drop-shadow(0 0 6px rgba(106, 183, 255, 0.8));
+      }
+
+      .play-icon .note {
+        fill: none;
+        stroke: rgba(106, 183, 255, 1);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .play-icon .note-head {
+        fill: rgba(106, 183, 255, 1);
+      }
+
+      .play-icon .wave {
+        fill: none;
+        stroke: rgba(147, 197, 253, 0.8);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        animation: wave-pulse 1.5s ease-in-out infinite;
+      }
+
+      .play-icon .wave:nth-child(2) {
+        animation-delay: 0.2s;
+        stroke: rgba(106, 183, 255, 0.6);
+      }
+
+      .play-icon .wave:nth-child(3) {
+        animation-delay: 0.4s;
+        stroke: rgba(59, 130, 246, 0.4);
+      }
+
+      @keyframes wave-pulse {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: translateX(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(2px);
+        }
+      }
+
+      .bar {
+        width: 3px;
+        border-radius: 2px;
+        animation: none;
+        background: linear-gradient(
+          to top,
+          rgba(59, 130, 246, 0.8),
+          rgba(106, 183, 255, 1)
+        );
+        box-shadow: 0 0 8px rgba(106, 183, 255, 0.6);
+      }
+
+      .bar:nth-child(1) {
+        height: 7px;
+      }
+
+      .bar:nth-child(2) {
+        height: 14px;
+      }
+
+      .bar:nth-child(3) {
+        height: 10px;
+      }
+
+      .bar:nth-child(4) {
+        height: 6px;
+      }
+
+      .music-btn.playing .bar {
+        animation: soundwave 0.6s ease-in-out infinite;
+      }
+
+      .music-btn.playing .bar:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .music-btn.playing .bar:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      .music-btn.playing .bar:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      .music-btn.playing .bar:nth-child(4) {
+        animation-delay: 0.45s;
+      }
+
+      @keyframes soundwave {
+        0%,
+        100% {
+          transform: scaleY(0.4);
+          opacity: 0.7;
+        }
+        50% {
+          transform: scaleY(1.2);
+          opacity: 1;
+        }
+      }
+
+      .tp-dfwv {
+        z-index: 200 !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+      }
+
+      .tp-rotv {
+        background: rgba(5, 8, 16, 0.95) !important;
+        backdrop-filter: blur(20px);
+        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+      }
+
+      .tp-rotv::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tp-rotv::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+      }
+
+      .tp-rotv::-webkit-scrollbar-thumb {
+        background: rgba(106, 183, 255, 0.3);
+        border-radius: 3px;
+      }
+
+      .tp-rotv::-webkit-scrollbar-thumb:hover {
+        background: rgba(106, 183, 255, 0.5);
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 20px 20px;
+        }
+
+        .nav-links {
+          gap: 16px;
+        }
+
+        .nav-link {
+          font-size: 11px;
+        }
+
+        .music-btn {
+          left: 18px;
+          bottom: 80px;
+          width: 42px;
+          height: 42px;
+        }
+
+        .main-content {
+          left: 20px;
+          bottom: auto;
+          top: 80px;
+          right: 20px;
+          max-width: calc(100vw - 40px);
+        }
+
+        .main-content-2 {
+          left: 20px;
+          right: 20px;
+          bottom: 20px;
+          max-width: calc(100vw - 40px);
+        }
+
+        .tags {
+          gap: 6px;
+          margin-bottom: 14px;
+        }
+
+        .tag {
+          padding: 3px 10px;
+          font-size: 10px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          line-height: 1.6;
+          margin-bottom: 20px;
+        }
+
+        .meta-info {
+          gap: 20px;
+          padding-top: 12px;
+        }
+
+        .meta-label {
+          font-size: 9px;
+        }
+
+        .meta-value {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header {
+          padding: 16px;
+        }
+
+        .nav-links {
+          gap: 12px;
+        }
+
+        .nav-link {
+          font-size: 10px;
+        }
+
+        .music-btn {
+          left: 16px;
+          bottom: 80px;
+          width: 48px;
+          height: 48px;
+        }
+
+        .play-icon {
+          width: 20px;
+          height: 20px;
+        }
+
+        .bar {
+          width: 3px;
+        }
+
+        .music-bars {
+          gap: 3px;
+          height: 18px;
+        }
+
+        .main-content {
+          left: 16px;
+          top: 70px;
+          bottom: auto;
+          right: 16px;
+          max-width: calc(100vw - 32px);
+        }
+
+        .main-content-2 {
+          left: 16px;
+          right: 16px;
+          bottom: 16px;
+          max-width: calc(100vw - 32px);
+        }
+
+        .tags {
+          gap: 5px;
+        }
+
+        .tag {
+          padding: 2px 8px;
+          font-size: 9px;
+        }
+
+        .subtitle {
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .meta-info {
+          gap: 16px;
+        }
+
+        .meta-item {
+          gap: 4px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .subtitle {
+          font-size: 12px;
+        }
+
+        .tags {
+          gap: 4px;
+        }
+
+        .tag {
+          font-size: 8px;
+          padding: 2px 6px;
+        }
+
+        .music-btn {
+          left: 16px;
+          bottom: 140px;
+          width: 48px;
+          height: 48px;
+        }
+      }
+    </style>
+    <title>Crystal Bird — Flowfield Particles</title>
+  </head>
+
+  <body>
+    <div class="loader" id="loader">
+      <div class="loader-content">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading Experience</div>
+      </div>
+    </div>
+
+    <header class="header">
+      <nav class="nav-links">
+        <a
+          href="https://github.com/SahilK-027/0x7444ff/tree/main/glowing-phoenix"
+          target="_blank"
+          class="nav-link"
+          >Source</a
+        >
+        <a href="https://github.com/SahilK-027" target="_blank" class="nav-link"
+          >GitHub</a
+        >
+        <a href="https://x.com/SahilK027" target="_blank" class="nav-link"
+          >Twitter</a
+        >
+      </nav>
+    </header>
+
+    <div class="main-content">
+      <div class="tags">
+        <span class="tag">GPGPU Particles</span>
+        <span class="tag">Post-Processing</span>
+        <span class="tag">Shaders</span>
+      </div>
+      <p class="subtitle">
+        Interactive 3D visualization featuring crystal bird geometry with
+        flowfield particle animation and post-processing effects.
+      </p>
+    </div>
+
+    <div class="main-content-2">
+      <div class="meta-info">
+        <div class="meta-item">
+          <span class="meta-label">Created By</span>
+          <span class="meta-value"
+            ><a href="https://github.com/SahilK-027" target="_blank"
+              >SahilK-027</a
+            ></span
+          >
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">3D Model By</span>
+          <span class="meta-value"
+            ><a
+              href="https://sketchfab.com/3d-models/bee-eater-7d9d998d873248ed9a0179b752bdf472"
+              target="_blank"
+              rel="noopener noreferrer"
+              >muzea.malopolska</a
+            ></span
+          >
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Stack</span>
+          <span class="meta-value">Three.js · GLSL</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Music By</span>
+          <span class="meta-value"
+            ><a
+              href="https://pixabay.com/users/tunetank-50201703/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=347692"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Tunetank</a
+            >
+            from
+            <a
+              href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=347692"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Pixabay</a
+            ></span
+          >
+        </div>
+      </div>
+    </div>
+
+    <button class="music-btn" id="musicBtn">
+      <div class="music-btn-inner">
+        <svg class="play-icon" viewBox="0 0 24 24">
+          <path class="note" d="M9 18V5l12-2v13" />
+          <circle class="note-head" cx="6" cy="18" r="3" />
+          <circle class="note-head" cx="18" cy="16" r="3" />
+          <path class="wave" d="M2 10c2-2 4-2 6 0" />
+          <path class="wave" d="M2 14c2-2 4-2 6 0" />
+        </svg>
+        <div class="music-bars">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+    </button>
+
+    <canvas class="webgl"></canvas>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

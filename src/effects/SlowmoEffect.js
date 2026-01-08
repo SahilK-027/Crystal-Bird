@@ -134,147 +134,14 @@ export class SlowmoEffect {
   }
 
   setupHUD() {
-    // Create HUD container
-    this.hudElement = document.createElement('div');
-    this.hudElement.className = 'slowmo-hud';
-    this.hudElement.style.cssText = `
-      position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      opacity: 0;
-      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      pointer-events: none;
-      z-index: 1000;
-    `;
-
-    // Create linear progress bar
-    const progressContainer = document.createElement('div');
-    progressContainer.style.cssText = `
-      position: relative;
-      width: 280px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 2px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(106, 183, 255, 0.1);
-    `;
-
-    // Progress bar fill
-    this.progressBar = document.createElement('div');
-    this.progressBar.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, 
-        rgba(59, 130, 246, 1) 0%, 
-        rgba(106, 183, 255, 1) 50%,
-        rgba(147, 197, 253, 1) 100%
-      );
-      border-radius: 2px;
-      transition: width 0.05s linear;
-      box-shadow: 0 0 16px rgba(106, 183, 255, 0.8),
-                  0 0 32px rgba(106, 183, 255, 0.4);
-    `;
-
-    progressContainer.appendChild(this.progressBar);
-
-    this.hudElement.appendChild(progressContainer);
-    document.body.appendChild(this.hudElement);
-
-    // Create keyboard hint (always visible)
-    this.createKeyboardHint();
-  }
-
-  createKeyboardHint() {
-    this.hintElement = document.createElement('div');
-    this.hintElement.style.cssText = `
-      position: fixed;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px;
-      background: rgba(5, 8, 16, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(106, 183, 255, 0.2);
-      border-radius: 24px;
-      color: rgba(255, 255, 255, 0.9);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 13px;
-      font-weight: 400;
-      letter-spacing: 0.4px;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 1000;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(106, 183, 255, 0.1) inset;
-      animation: hintFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
-    `;
-
-    const kbd = document.createElement('kbd');
-    kbd.textContent = 'SPACE';
-    kbd.style.cssText = `
-      padding: 4px 10px;
-      background: rgba(106, 183, 255, 0.12);
-      border: 1px solid rgba(106, 183, 255, 0.3);
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(106, 183, 255, 1);
-      box-shadow: 0 2px 8px rgba(106, 183, 255, 0.2);
-      font-family: 'Inter', monospace;
-      letter-spacing: 0.5px;
-    `;
-
-    const divider = document.createElement('span');
-    divider.textContent = 'or';
-    divider.style.cssText = `
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 11px;
-      font-weight: 400;
-    `;
-
-    this.hintElement.appendChild(document.createTextNode('Press '));
-    this.hintElement.appendChild(kbd);
-    this.hintElement.appendChild(document.createTextNode(' '));
-    this.hintElement.appendChild(divider);
-    this.hintElement.appendChild(document.createTextNode(' hold mouse to dive'));
-    document.body.appendChild(this.hintElement);
-
-    // Add CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes hintFadeIn {
-        0% { 
-          opacity: 0; 
-          transform: translateX(-50%) translateY(10px) scale(0.95); 
-        }
-        100% { 
-          opacity: 1; 
-          transform: translateX(-50%) translateY(0) scale(1); 
-        }
-      }
-      
-      @keyframes pulse-glow {
-        0%, 100% { 
-          opacity: 0.6;
-          transform: scale(1);
-        }
-        50% { 
-          opacity: 1;
-          transform: scale(1.05);
-        }
-      }
-    `;
-    document.head.appendChild(style);
+    // Reference existing DOM elements from index.html
+    this.hudElement = document.querySelector('.slowmo-hud');
+    this.progressBar = document.querySelector('.slowmo-progress-bar');
+    this.hintElement = document.querySelector('.slowmo-hint');
+    
+    if (!this.hudElement || !this.progressBar || !this.hintElement) {
+      console.warn('SlowmoEffect: UI elements not found in DOM');
+    }
   }
 
   setupInputHandlers() {
@@ -497,14 +364,13 @@ export class SlowmoEffect {
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('keyup', this.onKeyUp);
 
-    // Remove HUD
-    if (this.hudElement && this.hudElement.parentNode) {
-      this.hudElement.parentNode.removeChild(this.hudElement);
+    // Reset HUD visibility (don't remove elements, they're in index.html)
+    if (this.hudElement) {
+      this.hudElement.style.opacity = '0';
     }
     
-    // Remove hint
-    if (this.hintElement && this.hintElement.parentNode) {
-      this.hintElement.parentNode.removeChild(this.hintElement);
+    if (this.progressBar) {
+      this.progressBar.style.width = '0%';
     }
 
     // Remove post-processing passes

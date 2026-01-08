@@ -70,7 +70,10 @@ export class LoadingManager {
   checkIfFullyReady() {
     // Only show buttons when both assets are loaded AND systems are ready
     if (this.assetsLoaded && this.systemsReady) {
+      console.log('✅ All assets and systems ready - showing explore buttons');
       this.loadingScreen.updateProgress(100);
+    } else {
+      console.log(`⏳ Waiting... Assets: ${this.assetsLoaded}, Systems: ${this.systemsReady}`);
     }
   }
 

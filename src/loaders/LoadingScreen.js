@@ -42,13 +42,17 @@ export class LoadingScreen {
     this.btnMusic.disabled = true;
     this.btnSilent.disabled = true;
     
+    console.log('🚀 Starting experience with music:', withMusic);
+    
     // Start fade out transition immediately
     this.container.classList.add('hidden');
     
-    // Call onStart immediately - everything is already initialized
-    if (this.onStart) {
-      this.onStart(withMusic);
-    }
+    // Call onStart immediately in next frame to avoid blocking the fade animation
+    requestAnimationFrame(() => {
+      if (this.onStart) {
+        this.onStart(withMusic);
+      }
+    });
     
     // Remove DOM element after transition completes
     setTimeout(() => {

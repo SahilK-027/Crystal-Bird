@@ -68,6 +68,7 @@ export class Application {
     this.audioManager = new AudioManager(this.loadingManager.get(), false);
 
     this.modelLoader.load('/models/bird.glb', (flowfieldSystem) => {
+      console.log('🐦 Model loaded successfully');
       if (flowfieldSystem) {
         this.guiManager.addFlowfieldControls(flowfieldSystem);
       }
@@ -86,22 +87,36 @@ export class Application {
   }
 
   initializeAllSystems() {
+    console.log('🔧 Starting system initialization...');
+    
     // Initialize all heavy systems during loading phase
+    // Use multiple frames to avoid blocking
+    
+    // Frame 1: Create music button
     requestAnimationFrame(() => {
-      // Create music button
+      console.log('🎵 Creating music button...');
       this.audioManager.createMusicButton();
       
-      // Initialize slowmo effect
-      this.slowmoEffect = new SlowmoEffect({
-        composer: this.postProcessing.composer,
-        camera: this.sceneManager.camera,
-        audio: this.audioManager.audio,
-        renderer: this.sceneManager.renderer,
-        chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
+      // Frame 2: Initialize slowmo effect
+      requestAnimationFrame(() => {
+        console.log('⏱️ Initializing slowmo effect...');
+        this.slowmoEffect = new SlowmoEffect({
+          composer: this.postProcessing.composer,
+          camera: this.sceneManager.camera,
+          audio: this.audioManager.audio,
+          renderer: this.sceneManager.renderer,
+          chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
+        });
+        
+        // Frame 3: Wait for slowmo to fully initialize (it defers HUD setup)
+        requestAnimationFrame(() => {
+          // Frame 4: Everything is ready - notify loading manager
+          requestAnimationFrame(() => {
+            console.log('✅ All systems initialized!');
+            this.loadingManager.setReady();
+          });
+        });
       });
-      
-      // Everything is ready - notify loading manager
-      this.loadingManager.setReady();
     });
   }
 
@@ -155,13 +170,19 @@ export class Application {
 
   startExperience(withMusic) {
     if (this.isStarted) return;
+    
+    console.log('🎬 Experience starting...');
     this.isStarted = true;
     
-    // Everything is already initialized, just start the music if requested
+    // Start music in next frame to avoid blocking
     if (withMusic) {
-      this.audioManager.play();
+      requestAnimationFrame(() => {
+        console.log('🎵 Starting audio playback...');
+        this.audioManager.play();
+      });
     }
     
+    console.log('✅ Experience started successfully!');
     // Animation loop is already running from preRenderFrame
   }
 

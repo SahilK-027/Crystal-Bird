@@ -45,7 +45,7 @@ This project is for educational and demonstration purposes.
 ## 🙏 Credits
 
 - **3D Model**: [Bee Eater](https://sketchfab.com/3d-models/bee-eater-7d9d998d873248ed9a0179b752bdf472) by [muzea.malopolska](https://sketchfab.com/muzea.malopolska)
-- **Music by**: [Tunetank](https://pixabay.com/users/tunetank-50201703/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=347692)
+- **Music by**: [FreeMusicForVideo](https://pixabay.com/users/freemusicforvideo-52198157/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=446647)
 - **Created by**: [SahilK-027](https://github.com/SahilK-027)
 
 ---

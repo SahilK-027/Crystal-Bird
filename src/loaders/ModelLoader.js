@@ -62,7 +62,6 @@ export class ModelLoader {
     );
   }
 
-
   addCenterAttribute(geometry) {
     const positionAttribute = geometry.getAttribute('position');
     const centers = new Float32Array(positionAttribute.count * 3);

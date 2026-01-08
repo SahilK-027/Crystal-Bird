@@ -10,7 +10,7 @@ export class ShaderMaterialManager {
       uniforms: {
         uTime: { value: 0.0 },
         uTriScale: { value: 0.7 },
-        uMosaic: { value: 20.0 },
+        uMosaic: { value: 27.0 },
         uProgress: { value: 1.0 },
         uMousePosition: { value: new THREE.Vector2(0, 0) },
         uMouseVelocity: { value: new THREE.Vector2(0, 0) },

@@ -11,7 +11,7 @@ export class FlowfieldParticleSystem {
     this.scene = scene;
     this.renderer = renderer;
 
-    this.WIDTH = 256;
+    this.WIDTH = 260;
     this.PARTICLES = this.WIDTH * this.WIDTH;
 
     this.init();
@@ -62,12 +62,13 @@ export class FlowfieldParticleSystem {
 
   fillInitialPositions(dtPosition) {
     const posArray = dtPosition.image.data;
+    const particleSpacing = 1.2;
     for (let k = 0; k < posArray.length; k += 4) {
       const vertex =
         this.birdVertices[Math.floor(Math.random() * this.birdVertices.length)];
-      posArray[k + 0] = vertex.x + (Math.random() - 0.5);
-      posArray[k + 1] = vertex.y + (Math.random() - 0.5);
-      posArray[k + 2] = vertex.z + (Math.random() - 0.5);
+      posArray[k + 0] = vertex.x + (Math.random() - 0.5) * particleSpacing;
+      posArray[k + 1] = vertex.y + (Math.random() - 0.5) * particleSpacing;
+      posArray[k + 2] = vertex.z + (Math.random() - 0.5) * particleSpacing;
       posArray[k + 3] = Math.random();
     }
   }

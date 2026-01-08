@@ -42,11 +42,11 @@ export class PostProcessingManager {
     this.composer.addPass(this.glowPass);
 
     this.chromaticAberrationPass = this.createChromaticAberrationPass();
+    this.composer.addPass(this.chromaticAberrationPass);
 
     this.filmGrainPass = this.createFilmGrainPass();
     this.composer.addPass(this.filmGrainPass);
   }
-
 
   createCustomPass() {
     const customShader = {
@@ -73,12 +73,11 @@ export class PostProcessingManager {
     return new ShaderPass(glowShader);
   }
 
-
   createChromaticAberrationPass() {
     const chromaticAberrationShader = {
       uniforms: {
         tDiffuse: { value: null },
-        uAberration: { value: 0.002 },
+        uAberration: { value: 0.0 },
         uMouseInfluence: { value: new THREE.Vector2(0, 0) },
       },
       vertexShader: chromaticAberrationVertexShader,
@@ -102,7 +101,9 @@ export class PostProcessingManager {
 
   update(elapsedTime, mouseVelocity) {
     this.glowPass.uniforms.uTime.value = elapsedTime;
-    this.chromaticAberrationPass.uniforms.uMouseInfluence.value.copy(mouseVelocity);
+    this.chromaticAberrationPass.uniforms.uMouseInfluence.value.copy(
+      mouseVelocity
+    );
     this.filmGrainPass.uniforms.uTime.value = elapsedTime;
   }
 

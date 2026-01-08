@@ -11,11 +11,11 @@ export class GUIManager {
     this.cloudBackground = null;
 
     this.params = {
-      shader: { mosaic: 20.0 },
+      shader: { mosaic: 27.0 },
       colors: { glowColor: '#186dec', accentColor: '#20558d' },
       bloom: { strength: 0.2, radius: 1.0, threshold: 0.8 },
       glow: { intensity: 0.4 },
-      chromatic: { aberration: 0.002 },
+      chromatic: { aberration: 0.0 },
       filmGrain: { intensity: 0.08 },
       flowfield: {
         strength: 0.65,

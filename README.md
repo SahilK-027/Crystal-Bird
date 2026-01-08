@@ -1,14 +1,20 @@
-# Crystal Bird — Flowfield Particles
+# Crystal Bird
+
+GPGPU Particles -> Flowfield Animation -> Unreal Bloom -> Chromatic Aberration -> Film Grain
 
 <img width="100%" height="100%" src="./preview.png" />
 
-[Demo](https://crystal-bird.vercel.app/)
+[🚀 Live Demo](https://crystal-bird.vercel.app/)
 
-## Installation
+An immersive 3D experience featuring a crystalline bird surrounded by dynamic flowfield particles, sparkle effects, and atmospheric environments. Built with Three.js and custom GLSL shaders for high-performance real-time graphics.
 
-Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server).
+## 🚀 Quick Start
 
 ```bash
+# Clone the repository
+git clone https://github.com/SahilK-027/Crystal-Bird.git
+cd crystal-bird
+
 # Install dependencies
 npm install
 
@@ -22,18 +28,26 @@ npm run build
 npm run preview
 ```
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Three.js** (v0.182.0) - 3D graphics library
+- **Three.js** (v0.182.0) - 3D graphics and WebGL rendering
 - **GLSL** - Custom vertex and fragment shaders
-- **GSAP** (v3.14.2) - Animation library
-- **Vite** (v6.0.0) - Build tool and dev server
-- **lil-gui** (v0.21.0) - Debug controls
+- **Vite** (v6.0.0) - Build tool and development server
+- **GSAP** (v3.14.2) - High-performance animations
+- **Tweakpane** (v4.0.5) - Debug GUI controls
+- **three-perf** (v1.0.11) - Performance monitoring
+- **vite-plugin-glsl** (v1.5.1) - GLSL shader imports
 
-## Credits
+## 📄 License
 
-- 3D Model: [Bee Eater](https://sketchfab.com/3d-models/bee-eater-7d9d998d873248ed9a0179b752bdf472) by [muzea.malopolska](https://sketchfab.com/muzea.malopolska)
-- Created by [SahilK-027](https://github.com/SahilK-027)
-- Inspired by generative art and particle systems
+This project is for educational and demonstration purposes.
 
-Made with 💜 using Three.js and GLSL
+## 🙏 Credits
+
+- **3D Model**: [Bee Eater](https://sketchfab.com/3d-models/bee-eater-7d9d998d873248ed9a0179b752bdf472) by [muzea.malopolska](https://sketchfab.com/muzea.malopolska)
+- **Music by**: [Tunetank](https://pixabay.com/users/tunetank-50201703/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=347692)
+- **Created by**: [SahilK-027](https://github.com/SahilK-027)
+
+---
+
+Made with 💜 using Three.js, and GLSL.

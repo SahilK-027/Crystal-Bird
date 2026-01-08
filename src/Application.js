@@ -64,13 +64,16 @@ export class Application {
       this.guiManager.getPane()
     );
 
-    // Initialize audio manager but don't create button yet
+    // Initialize audio manager (don't create button yet, but load audio)
     this.audioManager = new AudioManager(this.loadingManager.get(), false);
 
     this.modelLoader.load('/models/bird.glb', (flowfieldSystem) => {
       if (flowfieldSystem) {
         this.guiManager.addFlowfieldControls(flowfieldSystem);
       }
+      
+      // Model loaded - now initialize everything else
+      this.initializeAllSystems();
     });
 
     this.guiManager.addTreeControls(this.crystallineBranches);
@@ -80,6 +83,26 @@ export class Application {
     
     // Start rendering immediately but in paused state
     this.startPreRendering();
+  }
+
+  initializeAllSystems() {
+    // Initialize all heavy systems during loading phase
+    requestAnimationFrame(() => {
+      // Create music button
+      this.audioManager.createMusicButton();
+      
+      // Initialize slowmo effect
+      this.slowmoEffect = new SlowmoEffect({
+        composer: this.postProcessing.composer,
+        camera: this.sceneManager.camera,
+        audio: this.audioManager.audio,
+        renderer: this.sceneManager.renderer,
+        chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
+      });
+      
+      // Everything is ready - notify loading manager
+      this.loadingManager.setReady();
+    });
   }
 
   startPreRendering() {
@@ -134,25 +157,10 @@ export class Application {
     if (this.isStarted) return;
     this.isStarted = true;
     
-    // Create the music button now that we're starting
-    this.audioManager.createMusicButton();
-    
-    // Auto-play music if user chose to explore with music
+    // Everything is already initialized, just start the music if requested
     if (withMusic) {
-      // Small delay to ensure everything is ready
-      setTimeout(() => {
-        this.audioManager.play();
-      }, 100);
+      this.audioManager.play();
     }
-    
-    // Initialize slowmo effect after audio is ready
-    this.slowmoEffect = new SlowmoEffect({
-      composer: this.postProcessing.composer,
-      camera: this.sceneManager.camera,
-      audio: this.audioManager.audio,
-      renderer: this.sceneManager.renderer,
-      chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
-    });
     
     // Animation loop is already running from preRenderFrame
   }

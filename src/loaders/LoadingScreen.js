@@ -38,14 +38,22 @@ export class LoadingScreen {
   }
 
   startExperience(withMusic) {
+    // Disable buttons to prevent double-clicks
+    this.btnMusic.disabled = true;
+    this.btnSilent.disabled = true;
+    
+    // Start fade out transition immediately
     this.container.classList.add('hidden');
     
+    // Call onStart immediately - everything is already initialized
+    if (this.onStart) {
+      this.onStart(withMusic);
+    }
+    
+    // Remove DOM element after transition completes
     setTimeout(() => {
       this.dispose();
-      if (this.onStart) {
-        this.onStart(withMusic);
-      }
-    }, 800);
+    }, 850);
   }
 
   dispose() {

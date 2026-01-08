@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
 import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
@@ -68,8 +67,16 @@ export class SlowmoEffect {
 
   init() {
     this.setupPostProcessing();
-    this.setupHUD();
-    this.setupInputHandlers();
+    
+    // Defer HUD and input setup across multiple frames to avoid blocking
+    requestAnimationFrame(() => {
+      this.setupInputHandlers();
+      
+      // Defer HUD creation to next frame (it's heavier due to DOM manipulation)
+      requestAnimationFrame(() => {
+        this.setupHUD();
+      });
+    });
   }
 
   setupPostProcessing() {
@@ -138,76 +145,50 @@ export class SlowmoEffect {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: none;
       z-index: 1000;
     `;
 
-    // Create circular progress
+    // Create linear progress bar
     const progressContainer = document.createElement('div');
     progressContainer.style.cssText = `
       position: relative;
-      width: 80px;
-      height: 80px;
+      width: 280px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(106, 183, 255, 0.1);
     `;
 
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '80');
-    svg.setAttribute('height', '80');
-    svg.style.cssText = `
-      transform: rotate(-90deg);
+    // Progress bar fill
+    this.progressBar = document.createElement('div');
+    this.progressBar.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, 
+        rgba(59, 130, 246, 1) 0%, 
+        rgba(106, 183, 255, 1) 50%,
+        rgba(147, 197, 253, 1) 100%
+      );
+      border-radius: 2px;
+      transition: width 0.05s linear;
+      box-shadow: 0 0 16px rgba(106, 183, 255, 0.8),
+                  0 0 32px rgba(106, 183, 255, 0.4);
     `;
 
-    // Background circle
-    const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    bgCircle.setAttribute('cx', '40');
-    bgCircle.setAttribute('cy', '40');
-    bgCircle.setAttribute('r', '35');
-    bgCircle.setAttribute('fill', 'none');
-    bgCircle.setAttribute('stroke', 'rgba(255, 255, 255, 0.2)');
-    bgCircle.setAttribute('stroke-width', '3');
-
-    // Progress circle
-    this.progressCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    this.progressCircle.setAttribute('cx', '40');
-    this.progressCircle.setAttribute('cy', '40');
-    this.progressCircle.setAttribute('r', '35');
-    this.progressCircle.setAttribute('fill', 'none');
-    this.progressCircle.setAttribute('stroke', '#00ffff');
-    this.progressCircle.setAttribute('stroke-width', '3');
-    this.progressCircle.setAttribute('stroke-linecap', 'round');
-    this.progressCircle.style.cssText = `
-      filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
-      transition: stroke-dashoffset 0.05s linear;
-    `;
-    
-    const circumference = 2 * Math.PI * 35;
-    this.progressCircle.setAttribute('stroke-dasharray', circumference);
-    this.progressCircle.setAttribute('stroke-dashoffset', circumference);
-
-    svg.appendChild(bgCircle);
-    svg.appendChild(this.progressCircle);
-    progressContainer.appendChild(svg);
-
-    // Label
-    this.labelElement = document.createElement('div');
-    this.labelElement.textContent = 'Hold to slowmo';
-    this.labelElement.style.cssText = `
-      color: rgba(255, 255, 255, 0.9);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    `;
+    progressContainer.appendChild(this.progressBar);
 
     this.hudElement.appendChild(progressContainer);
-    this.hudElement.appendChild(this.labelElement);
     document.body.appendChild(this.hudElement);
 
-    // Create keyboard hint (shows briefly on load)
+    // Create keyboard hint (always visible)
     this.createKeyboardHint();
   }
 
@@ -215,63 +196,85 @@ export class SlowmoEffect {
     this.hintElement = document.createElement('div');
     this.hintElement.style.cssText = `
       position: fixed;
-      bottom: 140px;
+      bottom: 60px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      color: rgba(255, 255, 255, 0.8);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 12px;
+      gap: 10px;
+      padding: 10px 20px;
+      background: rgba(5, 8, 16, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(106, 183, 255, 0.2);
+      border-radius: 24px;
+      color: rgba(255, 255, 255, 0.9);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
       font-weight: 400;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.4px;
       opacity: 0;
       pointer-events: none;
       z-index: 1000;
-      animation: hintFadeInOut 5s ease-in-out forwards;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(106, 183, 255, 0.1) inset;
+      animation: hintFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
     `;
 
     const kbd = document.createElement('kbd');
     kbd.textContent = 'SPACE';
     kbd.style.cssText = `
-      padding: 2px 8px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
+      padding: 4px 10px;
+      background: rgba(106, 183, 255, 0.12);
+      border: 1px solid rgba(106, 183, 255, 0.3);
+      border-radius: 6px;
       font-size: 11px;
       font-weight: 600;
-      color: rgba(0, 255, 255, 0.9);
+      color: rgba(106, 183, 255, 1);
+      box-shadow: 0 2px 8px rgba(106, 183, 255, 0.2);
+      font-family: 'Inter', monospace;
+      letter-spacing: 0.5px;
+    `;
+
+    const divider = document.createElement('span');
+    divider.textContent = 'or';
+    divider.style.cssText = `
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 11px;
+      font-weight: 400;
     `;
 
     this.hintElement.appendChild(document.createTextNode('Press '));
     this.hintElement.appendChild(kbd);
-    this.hintElement.appendChild(document.createTextNode(' or hold mouse'));
+    this.hintElement.appendChild(document.createTextNode(' '));
+    this.hintElement.appendChild(divider);
+    this.hintElement.appendChild(document.createTextNode(' hold mouse to dive'));
     document.body.appendChild(this.hintElement);
 
-    // Add CSS animation
+    // Add CSS animations
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes hintFadeInOut {
-        0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-        10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+      @keyframes hintFadeIn {
+        0% { 
+          opacity: 0; 
+          transform: translateX(-50%) translateY(10px) scale(0.95); 
+        }
+        100% { 
+          opacity: 1; 
+          transform: translateX(-50%) translateY(0) scale(1); 
+        }
+      }
+      
+      @keyframes pulse-glow {
+        0%, 100% { 
+          opacity: 0.6;
+          transform: scale(1);
+        }
+        50% { 
+          opacity: 1;
+          transform: scale(1.05);
+        }
       }
     `;
     document.head.appendChild(style);
-
-    // Remove hint after animation
-    setTimeout(() => {
-      if (this.hintElement && this.hintElement.parentNode) {
-        this.hintElement.parentNode.removeChild(this.hintElement);
-      }
-    }, 5500);
   }
 
   setupInputHandlers() {
@@ -289,13 +292,13 @@ export class SlowmoEffect {
     window.addEventListener('keyup', this.onKeyUp);
   }
 
-  handlePointerDown(event) {
+  handlePointerDown() {
     if (!this.isHolding) {
       this.startHold();
     }
   }
 
-  handlePointerUp(event) {
+  handlePointerUp() {
     if (this.isHolding) {
       this.endHold();
     }
@@ -321,9 +324,7 @@ export class SlowmoEffect {
     this.holdStartTime = performance.now();
     this.holdElapsed = 0;
     
-    // Show HUD
-    this.hudElement.style.opacity = '1';
-    this.labelElement.textContent = 'Hold to slowmo';
+    // Don't show HUD immediately - wait for holdDelay
   }
 
   endHold() {
@@ -333,9 +334,6 @@ export class SlowmoEffect {
     this.releaseProgress = 0;
     this.progressAtRelease = this.progress;  // Store current progress for smooth lerp
     this.targetTimeScale = 1.0;
-    
-    // Update HUD
-    this.labelElement.textContent = 'Releasing...';
   }
 
   update(deltaTime) {
@@ -346,12 +344,15 @@ export class SlowmoEffect {
       // Update hold time
       this.holdElapsed = (now - this.holdStartTime) / 1000;
       
-      // Linear progress with 1s delay, then ramp over 3s (total 4s to full effect)
-      // 0-1s: progress stays at 0
-      // 1-4s: progress ramps from 0 to 1
+      // Linear progress with delay, then ramp over duration
       if (this.holdElapsed < this.config.holdDelay) {
         this.progress = 0;
+        // Hide HUD during delay period
+        this.hudElement.style.opacity = '0';
       } else {
+        // Show HUD once delay is over
+        this.hudElement.style.opacity = '1';
+        
         const effectiveHoldTime = this.holdElapsed - this.config.holdDelay;
         this.progress = Math.min(effectiveHoldTime / this.config.holdDuration, 1.0);
       }
@@ -480,19 +481,9 @@ export class SlowmoEffect {
   }
 
   updateHUDProgress(progress) {
-    // Show progress on the circle (0 to 1 maps to full circle)
-    const circumference = 2 * Math.PI * 35;
-    const offset = circumference - (progress * circumference);
-    this.progressCircle.setAttribute('stroke-dashoffset', offset);
-    
-    // Update label to show timing
-    if (this.isHolding) {
-      if (this.holdElapsed < this.config.holdDelay) {
-        this.labelElement.textContent = 'Hold to slowmo';
-      } else {
-        this.labelElement.textContent = 'Hold to slowmo';
-      }
-    }
+    // Update linear progress bar width
+    const percentage = Math.max(0, Math.min(100, progress * 100));
+    this.progressBar.style.width = `${percentage}%`;
   }
 
   lerp(a, b, t) {
@@ -509,6 +500,11 @@ export class SlowmoEffect {
     // Remove HUD
     if (this.hudElement && this.hudElement.parentNode) {
       this.hudElement.parentNode.removeChild(this.hudElement);
+    }
+    
+    // Remove hint
+    if (this.hintElement && this.hintElement.parentNode) {
+      this.hintElement.parentNode.removeChild(this.hintElement);
     }
 
     // Remove post-processing passes

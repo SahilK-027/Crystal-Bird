@@ -9,6 +9,8 @@ export class LoadingManager {
     this.totalItems = 0;
     this.loadedItems = 0;
     this.withMusic = false;
+    this.assetsLoaded = false;
+    this.systemsReady = false;
     
     this.setupLoadingScreen();
     this.setupCallbacks();
@@ -43,7 +45,8 @@ export class LoadingManager {
     };
 
     this.manager.onLoad = () => {
-      this.loadingScreen.updateProgress(100);
+      this.assetsLoaded = true;
+      this.checkIfFullyReady();
     };
 
     this.manager.onError = (url) => {
@@ -55,6 +58,19 @@ export class LoadingManager {
     if (this.totalItems > 0) {
       const progress = (this.loadedItems / this.totalItems) * 100;
       this.loadingScreen.updateProgress(progress);
+    }
+  }
+
+  setReady() {
+    // Called when all systems are initialized
+    this.systemsReady = true;
+    this.checkIfFullyReady();
+  }
+
+  checkIfFullyReady() {
+    // Only show buttons when both assets are loaded AND systems are ready
+    if (this.assetsLoaded && this.systemsReady) {
+      this.loadingScreen.updateProgress(100);
     }
   }
 

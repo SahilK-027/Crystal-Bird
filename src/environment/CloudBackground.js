@@ -27,12 +27,12 @@ export class CloudBackground {
       fragmentShader,
       transparent: true,
       depthWrite: false,
+      side: THREE.BackSide, // Render on the inside of the sphere
     });
 
-    const geometry = new THREE.PlaneGeometry(100, 60);
+    // Create a large sphere for the skydome
+    const geometry = new THREE.SphereGeometry(50, 64, 32);
     this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.position.z = -10;
-    this.mesh.rotation.set(-0.1, Math.PI / 7, 0);
     this.mesh.renderOrder = -100;
 
     this.scene.add(this.mesh);

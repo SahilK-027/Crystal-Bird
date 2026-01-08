@@ -31,12 +31,12 @@ export class SlowmoEffect {
 
       defaultDamp: 0.96,
       trailDamp: 0.7,
-      maxRGBShift: 0.005,
+      maxRGBShift: 0.0055,
       maxCustomAberration: 0.008,
       maxVignette: 1.8,
 
       baseFOV: this.camera.fov,
-      maxFOVChange: 5,
+      maxFOVChange: 7,
 
       ...options.config,
     };

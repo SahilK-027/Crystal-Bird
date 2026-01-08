@@ -4,7 +4,7 @@ export class GUIManager {
   constructor(shaderMaterial, postProcessing, flowfieldSystem, sparkleSystem) {
     const urlParams = new URLSearchParams(window.location.search);
     this.debugMode = urlParams.get('mode') === 'debug';
-    
+
     if (this.debugMode) {
       this.pane = new Pane({ title: 'Controls', expanded: false });
     } else {

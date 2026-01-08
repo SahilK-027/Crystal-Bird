@@ -15,9 +15,11 @@ void main() {
   float shimmer = sin(uTime * 2.0 + vViewPosition.x * 10.0) * 0.15 + 0.85;
   float sparkle = noise(vUv * 20.0 + uTime * 0.5);
   sparkle = pow(sparkle, 8.0) * 2.0;
+
   vec3 color = uColor * (0.5 + fresnel * 0.8) * shimmer;
   color += uGlowColor * fresnel * 0.6;
   color += vec3(1.0) * sparkle * 0.3;
+
   float alpha = 0.6 + fresnel * 0.4;
   gl_FragColor = vec4(color * 1.2, alpha);
 }

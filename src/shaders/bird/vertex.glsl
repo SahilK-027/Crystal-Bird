@@ -39,18 +39,18 @@ void main() {
 
     vec4 clipPos = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
     vec2 ndcPos = clipPos.xy / clipPos.w;
-    
+
     vec2 mouseDelta2D = uMousePosition - ndcPos;
     float mouseDistance = length(mouseDelta2D);
-    
+
     float mouseInfluence = smoothstep(0.15, 0.0, mouseDistance);
 
     mat3 normalMatrix = mat3(modelViewMatrix);
     mat3 invNormalMatrix = transpose(normalMatrix);
-    
+
     vec3 viewPush = vec3(-mouseDelta2D, 0.0);
     vec3 modelPush = invNormalMatrix * viewPush;
-    
+
     pos += modelPush * mouseInfluence * 0.5;
 
     float transformStart = -(position.z * 0.5 + 0.5) * 4.0;

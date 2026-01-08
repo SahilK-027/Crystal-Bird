@@ -11,6 +11,7 @@ void main() {
   vec4 texel = texture2D(tDiffuse, vUv);
   float grain = random(vUv + fract(uTime)) * 2.0 - 1.0;
   grain *= uIntensity;
+
   vec3 color = texel.rgb + vec3(grain);
   gl_FragColor = vec4(color, texel.a);
 }

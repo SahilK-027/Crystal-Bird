@@ -7,7 +7,7 @@ export class AudioManager {
     this.button = null;
 
     this.loadAudio();
-    
+
     if (createButtonImmediately) {
       this.createMusicButton();
     }
@@ -54,9 +54,9 @@ export class AudioManager {
     if (existingBtn) {
       existingBtn.remove();
     }
-    
+
     if (this.button) return;
-    
+
     const button = document.createElement('button');
     button.className = 'music-btn';
     button.setAttribute('aria-label', 'Toggle music');
@@ -83,7 +83,7 @@ export class AudioManager {
     button.addEventListener('click', () => this.toggle());
     document.body.appendChild(button);
     this.button = button;
-    
+
     if (this.isPlaying) {
       this.button.classList.add('playing');
     }

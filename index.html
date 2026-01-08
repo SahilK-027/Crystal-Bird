@@ -1107,13 +1107,21 @@
       }
 
       @keyframes backdropFadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       @keyframes backdropFadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
       }
 
       .onboarding-overlay {
@@ -1135,9 +1143,9 @@
         width: 420px;
         max-width: 90vw;
         opacity: 0;
-        animation: onboardingFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
-        box-shadow: 
-          0 24px 80px rgba(0, 0, 0, 0.6),
+        animation: onboardingFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards
+          0.1s;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6),
           0 0 80px rgba(106, 183, 255, 0.08),
           inset 0 1px 0 rgba(255, 255, 255, 0.05);
         overflow: hidden;
@@ -1205,15 +1213,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 
-          0 8px 24px rgba(106, 183, 255, 0.15),
+        box-shadow: 0 8px 24px rgba(106, 183, 255, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
         animation: iconFloat 3s ease-in-out infinite;
       }
 
       @keyframes iconFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-4px); }
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
       }
 
       .onboarding-icon i {
@@ -1257,10 +1269,18 @@
         animation: tipSlideIn 0.4s ease forwards;
       }
 
-      .onboarding-tip:nth-child(1) { animation-delay: 0.2s; }
-      .onboarding-tip:nth-child(2) { animation-delay: 0.3s; }
-      .onboarding-tip:nth-child(3) { animation-delay: 0.4s; }
-      .onboarding-tip:nth-child(4) { animation-delay: 0.5s; }
+      .onboarding-tip:nth-child(1) {
+        animation-delay: 0.2s;
+      }
+      .onboarding-tip:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+      .onboarding-tip:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .onboarding-tip:nth-child(4) {
+        animation-delay: 0.5s;
+      }
 
       @keyframes tipSlideIn {
         to {
@@ -1371,7 +1391,11 @@
       }
 
       .onboarding-checkbox input:checked + .checkbox-custom {
-        background: linear-gradient(135deg, rgba(106, 183, 255, 0.3), rgba(59, 130, 246, 0.25));
+        background: linear-gradient(
+          135deg,
+          rgba(106, 183, 255, 0.3),
+          rgba(59, 130, 246, 0.25)
+        );
         border-color: rgba(106, 183, 255, 0.6);
         box-shadow: 0 0 12px rgba(106, 183, 255, 0.2);
       }
@@ -1397,7 +1421,11 @@
 
       .onboarding-dismiss {
         padding: 10px 24px;
-        background: linear-gradient(135deg, rgba(106, 183, 255, 0.2), rgba(59, 130, 246, 0.15));
+        background: linear-gradient(
+          135deg,
+          rgba(106, 183, 255, 0.2),
+          rgba(59, 130, 246, 0.15)
+        );
         border: 1px solid rgba(106, 183, 255, 0.35);
         border-radius: 10px;
         color: rgba(106, 183, 255, 1);
@@ -1411,7 +1439,11 @@
       }
 
       .onboarding-dismiss:hover {
-        background: linear-gradient(135deg, rgba(106, 183, 255, 0.3), rgba(59, 130, 246, 0.25));
+        background: linear-gradient(
+          135deg,
+          rgba(106, 183, 255, 0.3),
+          rgba(59, 130, 246, 0.25)
+        );
         border-color: rgba(106, 183, 255, 0.5);
         box-shadow: 0 6px 24px rgba(106, 183, 255, 0.25);
         transform: translateY(-1px);
@@ -1624,7 +1656,6 @@
   </head>
 
   <body>
-    <!-- Loading Screen -->
     <div id="crystal-loader">
       <div class="crystal-loader-background"></div>
       <div class="crystal-loader-content">
@@ -1712,9 +1743,6 @@
       </div>
     </div>
 
-    <!-- Music button is now created dynamically by AudioManager.js -->
-
-    <!-- Slowmo UI -->
     <div class="slowmo-hint">
       <div class="hint-text" id="hint-text"></div>
     </div>
@@ -1727,7 +1755,6 @@
 
     <canvas class="webgl"></canvas>
 
-    <!-- Onboarding Overlay -->
     <div
       id="onboarding-backdrop"
       class="onboarding-backdrop"
@@ -1745,7 +1772,7 @@
         <h3 class="onboarding-title">Welcome to Crystal Bird</h3>
         <p class="onboarding-subtitle">Here's how to explore the experience</p>
       </div>
-      
+
       <div class="onboarding-tips">
         <div class="onboarding-tip">
           <div class="onboarding-tip-icon">
@@ -1756,7 +1783,7 @@
             <p class="onboarding-tip-desc">Orbit around the scene</p>
           </div>
         </div>
-        
+
         <div class="onboarding-tip">
           <div class="onboarding-tip-icon">
             <i class="fa-solid fa-magnifying-glass-plus"></i>
@@ -1766,7 +1793,7 @@
             <p class="onboarding-tip-desc">Zoom in and out</p>
           </div>
         </div>
-        
+
         <div class="onboarding-tip">
           <div class="onboarding-tip-icon">
             <i class="fa-solid fa-clock"></i>
@@ -1776,7 +1803,7 @@
             <p class="onboarding-tip-desc">Hold for slow motion</p>
           </div>
         </div>
-        
+
         <div class="onboarding-tip">
           <div class="onboarding-tip-icon">
             <i class="fa-solid fa-sliders"></i>
@@ -1787,7 +1814,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="onboarding-footer">
         <label class="onboarding-checkbox">
           <input type="checkbox" id="onboarding-dont-show" />
@@ -1801,7 +1828,6 @@
     </div>
 
     <script>
-      // Cycling hints system - only start after experience begins
       const hints = [
         { html: '<kbd>SCROLL</kbd> to zoom in & out' },
         { html: '<kbd>DRAG</kbd> to explore all angles' },
@@ -1818,29 +1844,23 @@
       function showNextHint() {
         if (!hintTextElement) return;
 
-        // Fade out current hint
         hintTextElement.classList.add('fade-out');
 
         setTimeout(() => {
-          // Update hint content
           currentHintIndex = (currentHintIndex + 1) % hints.length;
           hintTextElement.innerHTML = hints[currentHintIndex].html;
 
-          // Remove fade-out and trigger fade-in
           hintTextElement.classList.remove('fade-out');
 
-          // Force reflow to restart animation
           void hintTextElement.offsetWidth;
-        }, 500); // Match fade-out duration
+        }, 500);
       }
 
       function startHints() {
         if (!hintTextElement) return;
 
-        // Initialize first hint
         hintTextElement.innerHTML = hints[0].html;
 
-        // Cycle hints every 6 seconds
         hintInterval = setInterval(showNextHint, 6000);
       }
 
@@ -1851,15 +1871,12 @@
         }
       }
 
-      // Wait for loading screen to be removed before starting hints
-      // This prevents the script from running during loading
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           mutation.removedNodes.forEach((node) => {
             if (node.id === 'crystal-loader') {
-              // Loading screen removed, start hints after a short delay
               setTimeout(startHints, 500);
-              // Show onboarding overlay if not dismissed before
+
               setTimeout(showOnboarding, 600);
               observer.disconnect();
             }
@@ -1867,14 +1884,11 @@
         });
       });
 
-      // Observe body for removed children
       observer.observe(document.body, { childList: true });
 
-      // Onboarding overlay logic
       const ONBOARDING_STORAGE_KEY = 'crystal-bird-onboarding-dismissed';
 
       function showOnboarding() {
-        // Check if user has dismissed onboarding before
         if (localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true') {
           return;
         }
@@ -1892,16 +1906,13 @@
         );
 
         function dismissOnboarding() {
-          // Save preference if checkbox is checked
           if (dontShowCheckbox.checked) {
             localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
           }
 
-          // Hide with animation
           backdrop.classList.add('hidden');
           overlay.classList.add('hidden');
 
-          // Remove from DOM after animation
           setTimeout(() => {
             backdrop.style.display = 'none';
             overlay.style.display = 'none';
@@ -1911,7 +1922,6 @@
         dismissBtn.addEventListener('click', dismissOnboarding);
         backdrop.addEventListener('click', dismissOnboarding);
 
-        // Auto-dismiss after 15 seconds
         setTimeout(() => {
           if (!overlay.classList.contains('hidden')) {
             dismissOnboarding();

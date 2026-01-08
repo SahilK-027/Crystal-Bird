@@ -68,7 +68,7 @@ export class Application {
       if (flowfieldSystem) {
         this.guiManager.addFlowfieldControls(flowfieldSystem);
       }
-      
+
       this.initializeAllSystems();
     });
 
@@ -76,23 +76,23 @@ export class Application {
     this.guiManager.addCloudControls(this.cloudBackground);
 
     this.setupResizeHandler();
-    
+
     this.startPreRendering();
   }
 
-  initializeAllSystems() {    
+  initializeAllSystems() {
     requestAnimationFrame(() => {
       this.audioManager.createMusicButton();
-      
+
       requestAnimationFrame(() => {
         this.slowmoEffect = new SlowmoEffect({
           composer: this.postProcessing.composer,
           camera: this.sceneManager.camera,
           audio: this.audioManager.audio,
           renderer: this.sceneManager.renderer,
-          chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
+          chromaticAberrationPass: this.postProcessing.chromaticAberrationPass,
         });
-        
+
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -114,7 +114,7 @@ export class Application {
     if (this.isStarted) {
       this.performanceMonitor.beginFrame();
     }
-    
+
     const elapsedTime = this.clock.getElapsedTime();
     let deltaTime = elapsedTime - this.lastTime;
     this.lastTime = elapsedTime;
@@ -140,7 +140,7 @@ export class Application {
     }
 
     this.postProcessing.render();
-    
+
     if (this.isStarted) {
       this.performanceMonitor.endFrame();
     }
@@ -152,7 +152,7 @@ export class Application {
     if (this.isStarted) return;
 
     this.isStarted = true;
-    
+
     if (withMusic) {
       requestAnimationFrame(() => {
         this.audioManager.play();

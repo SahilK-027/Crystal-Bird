@@ -12,61 +12,49 @@ float fresnel(vec3 viewDirection, vec3 normal, float power) {
     return pow(1.0 - dot(viewDirection, normal), power);
 }
 
-// Improved noise function for more natural-looking effects
 float noise(vec2 coord) {
-  vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
-  return fract(magic.z * fract(dot(coord, magic.xy)));
+    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
+    return fract(magic.z * fract(dot(coord, magic.xy)));
 }
 
 void main() {
     vec3 viewDirection = normalize(cameraPosition - vNormal);
 
-    // Priority: texture > vertex color > default red
     vec3 baseColor;
-    if (uHasTexture) {
+    if(uHasTexture) {
         baseColor = texture2D(uTexture, vUv).rgb;
-    } else if (length(vVertexColor) > 0.01) {
+    } else if(length(vVertexColor) > 0.01) {
         baseColor = vVertexColor;
     } else {
         baseColor = vec3(1.0, 0.0, 0.0);
     }
-    
-    // Use uniform colors for glow and accent
+
     vec3 glowColor = baseColor * 1.5 + uGlowColor;
     vec3 accentColor = baseColor * 0.8 + uAccentColor;
 
-    // Enhanced base color with emissive glow
     vec3 color = mix(baseColor, glowColor, vDisplacement * 0.1);
 
-    // Pulsating ember effect
     float ember = sin(0.5) * 0.5 + 0.5;
     color += glowColor * ember * 0.3;
 
-    // Intense rim lighting for a constant magical aura
     float rim = fresnel(viewDirection, vNormal, 3.0);
     color += rim * glowColor * 1.2;
 
-    // Dynamic fire-like effect
     float fire = noise(vUv * 10.0 * 0.1);
     fire = smoothstep(0.4, 0.6, fire);
     color += fire * accentColor * 0.4;
 
-    // Shimmering effect for magical appearance
     float shimmer = noise(vUv * 20.0 * 0.2);
     color += shimmer * glowColor * 0.2;
 
-    // Enhanced feather detail
     float featherDetail = noise(vUv * 30.0);
     color = mix(color, accentColor, featherDetail * 0.15);
 
-    // Soft vignette for focus
     float vignette = smoothstep(0.7, 0.3, length(vUv - 0.5));
     color *= vignette * 0.7 + 0.3;
 
-    // Gamma correction for more accurate color representation
     color = pow(color, vec3(1.0));
 
-    // Intensity boost for stronger glow
     color *= 1.5;
 
     gl_FragColor = vec4(color, 1.0);

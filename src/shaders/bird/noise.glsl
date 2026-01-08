@@ -1,6 +1,3 @@
-//	Classic Perlin 3D Noise 
-//	by Stefan Gustavson (https://github.com/stegu/webgl-noise)
-//
 vec4 permute(vec4 x) {
     return mod(((x * 34.0) + 1.0) * x, 289.0);
 }
@@ -12,12 +9,12 @@ vec4 fade(vec4 t) {
 }
 
 float cnoise(vec4 P) {
-    vec4 Pi0 = floor(P); 
-    vec4 Pi1 = Pi0 + 1.0; 
+    vec4 Pi0 = floor(P);
+    vec4 Pi1 = Pi0 + 1.0;
     Pi0 = mod(Pi0, 289.0);
     Pi1 = mod(Pi1, 289.0);
-    vec4 Pf0 = fract(P); 
-    vec4 Pf1 = Pf0 - 1.0; 
+    vec4 Pf0 = fract(P);
+    vec4 Pf1 = Pf0 - 1.0;
     vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
     vec4 iy = vec4(Pi0.yy, Pi1.yy);
     vec4 iz0 = vec4(Pi0.zzzz);

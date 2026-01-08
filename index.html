@@ -10,6 +10,13 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <style>
       * {
         margin: 0;
@@ -1082,6 +1089,450 @@
         }
       }
 
+      /* Onboarding Overlay */
+      .onboarding-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 299;
+        background: rgba(5, 8, 16, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        opacity: 0;
+        animation: backdropFadeIn 0.5s ease forwards;
+      }
+
+      .onboarding-backdrop.hidden {
+        animation: backdropFadeOut 0.4s ease forwards;
+        pointer-events: none;
+      }
+
+      @keyframes backdropFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes backdropFadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+
+      .onboarding-overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 300;
+        background: linear-gradient(
+          135deg,
+          rgba(15, 20, 35, 0.95) 0%,
+          rgba(8, 12, 24, 0.98) 100%
+        );
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(106, 183, 255, 0.12);
+        border-radius: 20px;
+        padding: 0;
+        width: 420px;
+        max-width: 90vw;
+        opacity: 0;
+        animation: onboardingFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
+        box-shadow: 
+          0 24px 80px rgba(0, 0, 0, 0.6),
+          0 0 80px rgba(106, 183, 255, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+      }
+
+      .onboarding-overlay::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(106, 183, 255, 0.4),
+          transparent
+        );
+      }
+
+      .onboarding-overlay.hidden {
+        animation: onboardingFadeOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        pointer-events: none;
+      }
+
+      @keyframes onboardingFadeIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      @keyframes onboardingFadeOut {
+        from {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.95);
+        }
+      }
+
+      .onboarding-header {
+        padding: 28px 32px 20px;
+        text-align: center;
+        position: relative;
+      }
+
+      .onboarding-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 16px;
+        background: linear-gradient(
+          135deg,
+          rgba(106, 183, 255, 0.15) 0%,
+          rgba(59, 130, 246, 0.1) 100%
+        );
+        border: 1px solid rgba(106, 183, 255, 0.25);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+          0 8px 24px rgba(106, 183, 255, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: iconFloat 3s ease-in-out infinite;
+      }
+
+      @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+      }
+
+      .onboarding-icon i {
+        font-size: 24px;
+        color: rgba(106, 183, 255, 0.9);
+        filter: drop-shadow(0 0 8px rgba(106, 183, 255, 0.5));
+      }
+
+      .onboarding-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 6px;
+        letter-spacing: -0.3px;
+      }
+
+      .onboarding-subtitle {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 400;
+      }
+
+      .onboarding-tips {
+        padding: 8px 24px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .onboarding-tip {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateX(-10px);
+        animation: tipSlideIn 0.4s ease forwards;
+      }
+
+      .onboarding-tip:nth-child(1) { animation-delay: 0.2s; }
+      .onboarding-tip:nth-child(2) { animation-delay: 0.3s; }
+      .onboarding-tip:nth-child(3) { animation-delay: 0.4s; }
+      .onboarding-tip:nth-child(4) { animation-delay: 0.5s; }
+
+      @keyframes tipSlideIn {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .onboarding-tip:hover {
+        background: rgba(106, 183, 255, 0.05);
+        border-color: rgba(106, 183, 255, 0.15);
+      }
+
+      .onboarding-tip-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(
+          135deg,
+          rgba(106, 183, 255, 0.12) 0%,
+          rgba(59, 130, 246, 0.08) 100%
+        );
+        border: 1px solid rgba(106, 183, 255, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .onboarding-tip-icon i {
+        font-size: 14px;
+        color: rgba(106, 183, 255, 0.85);
+      }
+
+      .onboarding-tip-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .onboarding-tip-key {
+        display: inline-block;
+        padding: 4px 10px;
+        background: rgba(106, 183, 255, 0.1);
+        border: 1px solid rgba(106, 183, 255, 0.25);
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(106, 183, 255, 1);
+        font-family: 'Inter', monospace;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(106, 183, 255, 0.1);
+        white-space: nowrap;
+      }
+
+      .onboarding-tip-desc {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      .onboarding-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        background: rgba(0, 0, 0, 0.2);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .onboarding-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        transition: color 0.2s ease;
+      }
+
+      .onboarding-checkbox:hover {
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .onboarding-checkbox input {
+        display: none;
+      }
+
+      .onboarding-checkbox .checkbox-custom {
+        width: 20px;
+        height: 20px;
+        border: 1.5px solid rgba(106, 183, 255, 0.35);
+        border-radius: 4px;
+        background: rgba(106, 183, 255, 0.05);
+        position: relative;
+        transition: all 0.25s ease;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .onboarding-checkbox:hover .checkbox-custom {
+        border-color: rgba(106, 183, 255, 0.55);
+        background: rgba(106, 183, 255, 0.1);
+      }
+
+      .onboarding-checkbox input:checked + .checkbox-custom {
+        background: linear-gradient(135deg, rgba(106, 183, 255, 0.3), rgba(59, 130, 246, 0.25));
+        border-color: rgba(106, 183, 255, 0.6);
+        box-shadow: 0 0 12px rgba(106, 183, 255, 0.2);
+      }
+
+      .onboarding-checkbox .checkbox-custom::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 4px;
+        width: 5px;
+        height: 9px;
+        border: solid rgba(106, 183, 255, 1);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg) scale(0);
+        opacity: 0;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .onboarding-checkbox input:checked + .checkbox-custom::after {
+        transform: rotate(45deg) scale(1);
+        opacity: 1;
+      }
+
+      .onboarding-dismiss {
+        padding: 10px 24px;
+        background: linear-gradient(135deg, rgba(106, 183, 255, 0.2), rgba(59, 130, 246, 0.15));
+        border: 1px solid rgba(106, 183, 255, 0.35);
+        border-radius: 10px;
+        color: rgba(106, 183, 255, 1);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.3px;
+        box-shadow: 0 4px 16px rgba(106, 183, 255, 0.15);
+      }
+
+      .onboarding-dismiss:hover {
+        background: linear-gradient(135deg, rgba(106, 183, 255, 0.3), rgba(59, 130, 246, 0.25));
+        border-color: rgba(106, 183, 255, 0.5);
+        box-shadow: 0 6px 24px rgba(106, 183, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .onboarding-dismiss:active {
+        transform: translateY(0);
+      }
+
+      /* Onboarding Mobile Responsive */
+      @media (max-width: 768px) {
+        .onboarding-overlay {
+          width: 360px;
+          border-radius: 16px;
+        }
+
+        .onboarding-header {
+          padding: 24px 24px 16px;
+        }
+
+        .onboarding-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 14px;
+        }
+
+        .onboarding-icon svg {
+          width: 24px;
+          height: 24px;
+        }
+
+        .onboarding-title {
+          font-size: 16px;
+        }
+
+        .onboarding-tips {
+          padding: 4px 20px 20px;
+        }
+
+        .onboarding-tip {
+          padding: 12px 14px;
+          gap: 14px;
+        }
+
+        .onboarding-tip-icon {
+          width: 32px;
+          height: 32px;
+        }
+
+        .onboarding-tip-icon svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        .onboarding-tip-desc {
+          font-size: 12px;
+        }
+
+        .onboarding-footer {
+          padding: 16px 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .onboarding-backdrop {
+          backdrop-filter: blur(8px);
+        }
+
+        .onboarding-overlay {
+          width: 320px;
+          border-radius: 14px;
+        }
+
+        .onboarding-header {
+          padding: 20px 20px 14px;
+        }
+
+        .onboarding-icon {
+          width: 44px;
+          height: 44px;
+          margin-bottom: 12px;
+        }
+
+        .onboarding-title {
+          font-size: 15px;
+        }
+
+        .onboarding-subtitle {
+          font-size: 12px;
+        }
+
+        .onboarding-tips {
+          padding: 4px 16px 16px;
+          gap: 4px;
+        }
+
+        .onboarding-tip {
+          padding: 10px 12px;
+          gap: 12px;
+          border-radius: 10px;
+        }
+
+        .onboarding-tip-key {
+          font-size: 10px;
+          padding: 3px 8px;
+        }
+
+        .onboarding-tip-desc {
+          font-size: 11px;
+        }
+
+        .onboarding-checkbox {
+          font-size: 11px;
+        }
+
+        .onboarding-dismiss {
+          font-size: 12px;
+          padding: 8px 18px;
+        }
+      }
+
       /* Loading Screen Mobile Responsive */
       @media (max-width: 768px) {
         .crystal-loader-content {
@@ -1276,6 +1727,79 @@
 
     <canvas class="webgl"></canvas>
 
+    <!-- Onboarding Overlay -->
+    <div
+      id="onboarding-backdrop"
+      class="onboarding-backdrop"
+      style="display: none"
+    ></div>
+    <div
+      id="onboarding-overlay"
+      class="onboarding-overlay"
+      style="display: none"
+    >
+      <div class="onboarding-header">
+        <div class="onboarding-icon">
+          <i class="fa-solid fa-feather"></i>
+        </div>
+        <h3 class="onboarding-title">Welcome to Crystal Bird</h3>
+        <p class="onboarding-subtitle">Here's how to explore the experience</p>
+      </div>
+      
+      <div class="onboarding-tips">
+        <div class="onboarding-tip">
+          <div class="onboarding-tip-icon">
+            <i class="fa-solid fa-hand-pointer"></i>
+          </div>
+          <div class="onboarding-tip-content">
+            <span class="onboarding-tip-key">Drag</span>
+            <p class="onboarding-tip-desc">Orbit around the scene</p>
+          </div>
+        </div>
+        
+        <div class="onboarding-tip">
+          <div class="onboarding-tip-icon">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
+          </div>
+          <div class="onboarding-tip-content">
+            <span class="onboarding-tip-key">Scroll</span>
+            <p class="onboarding-tip-desc">Zoom in and out</p>
+          </div>
+        </div>
+        
+        <div class="onboarding-tip">
+          <div class="onboarding-tip-icon">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div class="onboarding-tip-content">
+            <span class="onboarding-tip-key">Space</span>
+            <p class="onboarding-tip-desc">Hold for slow motion</p>
+          </div>
+        </div>
+        
+        <div class="onboarding-tip">
+          <div class="onboarding-tip-icon">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div class="onboarding-tip-content">
+            <span class="onboarding-tip-key">/?mode=debug</span>
+            <p class="onboarding-tip-desc">Add to URL for controls</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="onboarding-footer">
+        <label class="onboarding-checkbox">
+          <input type="checkbox" id="onboarding-dont-show" />
+          <span class="checkbox-custom"></span>
+          <span>Don't show again</span>
+        </label>
+        <button class="onboarding-dismiss" id="onboarding-dismiss">
+          Got it
+        </button>
+      </div>
+    </div>
+
     <script>
       // Cycling hints system - only start after experience begins
       const hints = [
@@ -1293,7 +1817,7 @@
 
       function showNextHint() {
         if (!hintTextElement) return;
-        
+
         // Fade out current hint
         hintTextElement.classList.add('fade-out');
 
@@ -1312,10 +1836,10 @@
 
       function startHints() {
         if (!hintTextElement) return;
-        
+
         // Initialize first hint
         hintTextElement.innerHTML = hints[0].html;
-        
+
         // Cycle hints every 6 seconds
         hintInterval = setInterval(showNextHint, 6000);
       }
@@ -1335,6 +1859,8 @@
             if (node.id === 'crystal-loader') {
               // Loading screen removed, start hints after a short delay
               setTimeout(startHints, 500);
+              // Show onboarding overlay if not dismissed before
+              setTimeout(showOnboarding, 600);
               observer.disconnect();
             }
           });
@@ -1343,6 +1869,55 @@
 
       // Observe body for removed children
       observer.observe(document.body, { childList: true });
+
+      // Onboarding overlay logic
+      const ONBOARDING_STORAGE_KEY = 'crystal-bird-onboarding-dismissed';
+
+      function showOnboarding() {
+        // Check if user has dismissed onboarding before
+        if (localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true') {
+          return;
+        }
+
+        const backdrop = document.getElementById('onboarding-backdrop');
+        const overlay = document.getElementById('onboarding-overlay');
+        if (!overlay || !backdrop) return;
+
+        backdrop.style.display = 'block';
+        overlay.style.display = 'block';
+
+        const dismissBtn = document.getElementById('onboarding-dismiss');
+        const dontShowCheckbox = document.getElementById(
+          'onboarding-dont-show'
+        );
+
+        function dismissOnboarding() {
+          // Save preference if checkbox is checked
+          if (dontShowCheckbox.checked) {
+            localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+          }
+
+          // Hide with animation
+          backdrop.classList.add('hidden');
+          overlay.classList.add('hidden');
+
+          // Remove from DOM after animation
+          setTimeout(() => {
+            backdrop.style.display = 'none';
+            overlay.style.display = 'none';
+          }, 300);
+        }
+
+        dismissBtn.addEventListener('click', dismissOnboarding);
+        backdrop.addEventListener('click', dismissOnboarding);
+
+        // Auto-dismiss after 15 seconds
+        setTimeout(() => {
+          if (!overlay.classList.contains('hidden')) {
+            dismissOnboarding();
+          }
+        }, 15000);
+      }
     </script>
 
     <script type="module" src="/src/main.js"></script>

@@ -47,6 +47,7 @@ export class SlowmoEffect {
     };
 
     // State
+    this.isInitialized = false;
     this.isHolding = false;
     this.holdStartTime = 0;
     this.holdElapsed = 0;
@@ -66,15 +67,18 @@ export class SlowmoEffect {
   }
 
   init() {
-    this.setupPostProcessing();
-    
-    // Defer HUD and input setup across multiple frames to avoid blocking
+    // Defer ALL heavy setup across multiple frames to avoid blocking
     requestAnimationFrame(() => {
-      this.setupInputHandlers();
+      this.setupPostProcessing();
+      this.isInitialized = true;
       
-      // Defer HUD creation to next frame (it's heavier due to DOM manipulation)
       requestAnimationFrame(() => {
-        this.setupHUD();
+        this.setupInputHandlers();
+        
+        // Defer HUD creation to next frame (it's heavier due to DOM manipulation)
+        requestAnimationFrame(() => {
+          this.setupHUD();
+        });
       });
     });
   }
@@ -204,6 +208,11 @@ export class SlowmoEffect {
   }
 
   update(deltaTime) {
+    // Skip update if not yet initialized
+    if (!this.isInitialized) {
+      return 1.0;
+    }
+    
     const now = performance.now();
     const rawDelta = deltaTime;
 

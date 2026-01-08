@@ -108,12 +108,15 @@ export class Application {
           chromaticAberrationPass: this.postProcessing.chromaticAberrationPass
         });
         
-        // Frame 3: Wait for slowmo to fully initialize (it defers HUD setup)
+        // Frame 3-6: Wait for slowmo to fully initialize (it now defers post-processing too)
         requestAnimationFrame(() => {
-          // Frame 4: Everything is ready - notify loading manager
           requestAnimationFrame(() => {
-            console.log('✅ All systems initialized!');
-            this.loadingManager.setReady();
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                console.log('✅ All systems initialized!');
+                this.loadingManager.setReady();
+              });
+            });
           });
         });
       });

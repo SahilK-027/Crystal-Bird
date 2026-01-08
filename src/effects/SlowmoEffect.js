@@ -36,7 +36,7 @@ export class SlowmoEffect {
       // Post-processing parameters
       defaultDamp: 0.96,            // Default afterimage damp
       trailDamp: 0.7,               // Afterimage damp during slowmo
-      maxRGBShift: 0.008,           // Max RGB shift (subtle)
+      maxRGBShift: 0.005,           // Max RGB shift (subtle)
       maxCustomAberration: 0.008,   // Max custom chromatic aberration (if pass provided)
       maxVignette: 1.8,             // Max vignette intensity
       

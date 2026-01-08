@@ -2,7 +2,16 @@ import { Pane } from 'tweakpane';
 
 export class GUIManager {
   constructor(shaderMaterial, postProcessing, flowfieldSystem, sparkleSystem) {
-    this.pane = new Pane({ title: 'Controls', expanded: false });
+    // Check if debug mode is enabled via URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    this.debugMode = urlParams.get('mode') === 'debug';
+    
+    // Only create pane if debug mode is enabled
+    if (this.debugMode) {
+      this.pane = new Pane({ title: 'Controls', expanded: false });
+    } else {
+      this.pane = null;
+    }
 
     this.shaderMaterial = shaderMaterial;
     this.postProcessing = postProcessing;
@@ -30,7 +39,9 @@ export class GUIManager {
       clouds: { opacity: 0.3, tint: '#00aaff' },
     };
 
-    this.setupControls();
+    if (this.debugMode) {
+      this.setupControls();
+    }
   }
 
   setupControls() {
@@ -44,6 +55,7 @@ export class GUIManager {
   }
 
   setupShaderControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Shader Material' });
     folder
       .addBinding(this.params.shader, 'mosaic', { min: 1, max: 40, step: 0.1 })
@@ -53,6 +65,7 @@ export class GUIManager {
   }
 
   setupColorControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Colors' });
     folder
       .addBinding(this.params.colors, 'glowColor', { view: 'color' })
@@ -67,6 +80,7 @@ export class GUIManager {
   }
 
   setupSparkleControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Sparkle Particles' });
     folder
       .addBinding(this.params.sparkle, 'size', { min: 0.1, max: 5, step: 0.1 })
@@ -81,6 +95,7 @@ export class GUIManager {
   }
 
   setupBloomControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Bloom Effect' });
     folder
       .addBinding(this.params.bloom, 'strength', { min: 0, max: 3, step: 0.01 })
@@ -104,6 +119,7 @@ export class GUIManager {
   }
 
   setupGlowControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Glow Effect' });
     folder
       .addBinding(this.params.glow, 'intensity', {
@@ -117,6 +133,7 @@ export class GUIManager {
   }
 
   setupChromaticAberrationControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Chromatic Aberration' });
     folder
       .addBinding(this.params.chromatic, 'aberration', {
@@ -131,6 +148,7 @@ export class GUIManager {
   }
 
   setupFilmGrainControls() {
+    if (!this.pane) return;
     const folder = this.pane.addFolder({ title: 'Film Grain' });
     folder
       .addBinding(this.params.filmGrain, 'intensity', {
@@ -144,7 +162,7 @@ export class GUIManager {
   }
 
   addFlowfieldControls(flowfieldSystem) {
-    if (!flowfieldSystem) return;
+    if (!this.pane || !flowfieldSystem) return;
 
     const folder = this.pane.addFolder({ title: 'Flowfield Particles' });
 
@@ -203,7 +221,7 @@ export class GUIManager {
   }
 
   addCloudControls(cloudBackground) {
-    if (!cloudBackground) return;
+    if (!this.pane || !cloudBackground) return;
     this.cloudBackground = cloudBackground;
 
     const folder = this.pane.addFolder({
@@ -223,7 +241,7 @@ export class GUIManager {
   }
 
   addTreeControls(crystallineBranches) {
-    if (!crystallineBranches) return;
+    if (!this.pane || !crystallineBranches) return;
 
     const branches = crystallineBranches.getBranchesData();
     if (branches && branches.length > 0) {

@@ -24,7 +24,8 @@ export class SceneManager {
   setupCamera() {
     this.idealRatio = 16 / 9;
     this.ratioOverflow = 0;
-    this.initialCameraPosition = new THREE.Vector3(1.4, 0.5, 3.0);
+    this.initialCameraPosition = new THREE.Vector3(1.4, 0.5, 3.5);
+    this.baseMaxDistance = 5;
 
     this.parallaxAmplitude = 0.2;
     this.parallaxEasingSpeed = 10;
@@ -55,8 +56,12 @@ export class SceneManager {
     this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enableDamping = true;
     this.controls.enablePan = false;
-    this.controls.enableZoom = false;
-    this.controls.enableRotate = false;
+    this.controls.enableZoom = true;
+    this.controls.enableRotate = true;
+    this.controls.maxDistance = this.baseMaxDistance;
+    this.controls.maxPolarAngle = Math.PI / 2;
+    this.controls.minPolarAngle = Math.PI / 5;
+    this.controls.minDistance = 3;
   }
 
   updateCameraForAspectRatio() {
@@ -71,7 +76,7 @@ export class SceneManager {
     const adjustedPosition = direction.multiplyScalar(newDistance);
     this.camera.position.copy(adjustedPosition);
 
-    this.controls.maxDistance = Math.max(35, newDistance + 10);
+    this.controls.maxDistance = Math.max(this.baseMaxDistance, newDistance);
   }
 
   handleResize() {

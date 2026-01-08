@@ -52,53 +52,7 @@
         opacity: 0.4;
       }
 
-      .loader {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        top: 0;
-        left: 0;
-        z-index: 10000;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: #050810;
-        transition: opacity 0.6s ease, visibility 0.6s ease;
-      }
-
-      .loader.hidden {
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      .loader-content {
-        text-align: center;
-      }
-
-      .loader-spinner {
-        width: 40px;
-        height: 40px;
-        border: 2px solid rgba(106, 183, 255, 0.1);
-        border-top-color: #6ab7ff;
-        border-radius: 50%;
-        animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        margin: 0 auto 20px;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .loader-text {
-        font-size: 12px;
-        font-weight: 400;
-        letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.5);
-        text-transform: uppercase;
-      }
+      /* Old loader styles removed - now handled by LoadingScreen.js */
 
       .header {
         position: fixed;
@@ -668,12 +622,7 @@
   </head>
 
   <body>
-    <div class="loader" id="loader">
-      <div class="loader-content">
-        <div class="loader-spinner"></div>
-        <div class="loader-text">Loading Experience</div>
-      </div>
-    </div>
+    <!-- Loading screen is now handled by LoadingScreen.js -->
 
     <header class="header">
       <nav class="nav-links">
@@ -750,23 +699,7 @@
       </div>
     </div>
 
-    <button class="music-btn" id="musicBtn">
-      <div class="music-btn-inner">
-        <svg class="play-icon" viewBox="0 0 24 24">
-          <path class="note" d="M9 18V5l12-2v13" />
-          <circle class="note-head" cx="6" cy="18" r="3" />
-          <circle class="note-head" cx="18" cy="16" r="3" />
-          <path class="wave" d="M2 10c2-2 4-2 6 0" />
-          <path class="wave" d="M2 14c2-2 4-2 6 0" />
-        </svg>
-        <div class="music-bars">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </div>
-      </div>
-    </button>
+    <!-- Music button is now created dynamically by AudioManager.js -->
 
     <canvas class="webgl"></canvas>
 

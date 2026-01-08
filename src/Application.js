@@ -17,12 +17,13 @@ export class Application {
     this.canvas = document.querySelector('canvas.webgl');
     this.clock = new THREE.Clock();
     this.lastTime = 0;
+    this.isStarted = false;
 
     this.init();
   }
 
   init() {
-    this.loadingManager = new LoadingManager();
+    // Initialize scene and managers first
     this.sceneManager = new SceneManager(this.canvas);
     this.mouseManager = new MouseManager();
     this.shaderMaterialManager = new ShaderMaterialManager();
@@ -36,6 +37,11 @@ export class Application {
       this.sceneManager.renderer,
       this.sceneManager.sizes
     );
+
+    // Initialize loading manager with callback for when user clicks start
+    this.loadingManager = new LoadingManager((withMusic) => {
+      this.startExperience(withMusic);
+    });
 
     this.modelLoader = new ModelLoader(
       this.loadingManager.get(),
@@ -56,7 +62,8 @@ export class Application {
       this.guiManager.getPane()
     );
 
-    this.audioManager = new AudioManager(this.loadingManager.get());
+    // Initialize audio manager but don't create button yet
+    this.audioManager = new AudioManager(this.loadingManager.get(), false);
 
     this.modelLoader.load('/models/bird.glb', (flowfieldSystem) => {
       if (flowfieldSystem) {
@@ -68,7 +75,66 @@ export class Application {
     this.guiManager.addCloudControls(this.cloudBackground);
 
     this.setupResizeHandler();
-    this.animate();
+    
+    // Start rendering immediately but in paused state
+    this.startPreRendering();
+  }
+
+  startPreRendering() {
+    // Start the animation loop immediately
+    this.preRenderFrame();
+  }
+
+  preRenderFrame() {
+    if (this.isStarted) {
+      this.performanceMonitor.beginFrame();
+    }
+    
+    const elapsedTime = this.clock.getElapsedTime();
+    const deltaTime = elapsedTime - this.lastTime;
+    this.lastTime = elapsedTime;
+
+    // Update systems
+    this.mouseManager.update();
+    this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
+    this.sparkleSystem.update(elapsedTime);
+    this.crystallineBranches.update(elapsedTime);
+    this.cloudBackground.update(elapsedTime, deltaTime);
+    this.postProcessing.update(elapsedTime, this.mouseManager.mouseVelocity);
+    this.sceneManager.update(this.mouseManager, deltaTime);
+
+    const flowfieldSystem = this.modelLoader.getFlowfieldSystem();
+    if (flowfieldSystem) {
+      flowfieldSystem.update(deltaTime, elapsedTime);
+    }
+
+    // Render frame
+    this.postProcessing.render();
+    
+    if (this.isStarted) {
+      this.performanceMonitor.endFrame();
+    }
+
+    // Continue animation loop
+    window.requestAnimationFrame(() => this.preRenderFrame());
+  }
+
+  startExperience(withMusic) {
+    if (this.isStarted) return;
+    this.isStarted = true;
+    
+    // Create the music button now that we're starting
+    this.audioManager.createMusicButton();
+    
+    // Auto-play music if user chose to explore with music
+    if (withMusic) {
+      // Small delay to ensure everything is ready
+      setTimeout(() => {
+        this.audioManager.play();
+      }, 100);
+    }
+    
+    // Animation loop is already running from preRenderFrame
   }
 
   setupResizeHandler() {

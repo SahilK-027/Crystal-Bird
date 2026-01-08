@@ -1,23 +1,49 @@
 import * as THREE from 'three';
+import { LoadingScreen } from '../loaders/LoadingScreen.js';
 
 export class LoadingManager {
-  constructor() {
+  constructor(onReady) {
+    this.onReady = onReady;
     this.manager = new THREE.LoadingManager();
+    this.loadingScreen = null;
+    this.totalItems = 0;
+    this.loadedItems = 0;
+    this.withMusic = false;
+    
+    this.setupLoadingScreen();
     this.setupCallbacks();
   }
 
+  setupLoadingScreen() {
+    this.loadingScreen = new LoadingScreen((withMusic) => {
+      this.withMusic = withMusic;
+      // Hide the old loader if it exists
+      const oldLoader = document.getElementById('loader');
+      if (oldLoader) {
+        oldLoader.style.display = 'none';
+      }
+      
+      if (this.onReady) {
+        this.onReady(withMusic);
+      }
+    });
+  }
+
   setupCallbacks() {
-    this.manager.onStart = () => {
-      const loader = document.getElementById('loader');
-      if (loader) loader.style.display = 'flex';
+    this.manager.onStart = (url, itemsLoaded, itemsTotal) => {
+      this.totalItems = itemsTotal;
+      this.loadedItems = itemsLoaded;
+      this.updateProgress();
+    };
+
+    this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      this.totalItems = itemsTotal;
+      this.loadedItems = itemsLoaded;
+      this.updateProgress();
     };
 
     this.manager.onLoad = () => {
-      const loader = document.getElementById('loader');
-      if (loader) {
-        loader.classList.add('hidden');
-        setTimeout(() => (loader.style.display = 'none'), 600);
-      }
+      this.loadingScreen.updateProgress(100);
     };
 
     this.manager.onError = (url) => {
@@ -25,7 +51,18 @@ export class LoadingManager {
     };
   }
 
+  updateProgress() {
+    if (this.totalItems > 0) {
+      const progress = (this.loadedItems / this.totalItems) * 100;
+      this.loadingScreen.updateProgress(progress);
+    }
+  }
+
   get() {
     return this.manager;
+  }
+
+  getWithMusic() {
+    return this.withMusic;
   }
 }

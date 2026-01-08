@@ -1,12 +1,16 @@
 export class AudioManager {
-  constructor(loadingManager) {
+  constructor(loadingManager, createButtonImmediately = true) {
     this.loadingManager = loadingManager;
     this.audio = null;
     this.isPlaying = false;
     this.isLoaded = false;
+    this.button = null;
 
     this.loadAudio();
-    this.createMusicButton();
+    
+    if (createButtonImmediately) {
+      this.createMusicButton();
+    }
   }
 
   loadAudio() {
@@ -46,6 +50,15 @@ export class AudioManager {
   }
 
   createMusicButton() {
+    // Remove existing button from HTML if present
+    const existingBtn = document.getElementById('musicBtn');
+    if (existingBtn) {
+      existingBtn.remove();
+    }
+    
+    // Don't create duplicate buttons
+    if (this.button) return;
+    
     const button = document.createElement('button');
     button.className = 'music-btn';
     button.setAttribute('aria-label', 'Toggle music');
@@ -72,6 +85,11 @@ export class AudioManager {
     button.addEventListener('click', () => this.toggle());
     document.body.appendChild(button);
     this.button = button;
+    
+    // Update button state if already playing
+    if (this.isPlaying) {
+      this.button.classList.add('playing');
+    }
   }
 
   toggle() {
@@ -87,7 +105,9 @@ export class AudioManager {
       .play()
       .then(() => {
         this.isPlaying = true;
-        this.button.classList.add('playing');
+        if (this.button) {
+          this.button.classList.add('playing');
+        }
       })
       .catch((err) => {
         console.warn('Audio playback failed:', err);
@@ -97,7 +117,9 @@ export class AudioManager {
   pause() {
     this.audio.pause();
     this.isPlaying = false;
-    this.button.classList.remove('playing');
+    if (this.button) {
+      this.button.classList.remove('playing');
+    }
   }
 
   setVolume(value) {

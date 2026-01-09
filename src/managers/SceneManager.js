@@ -24,7 +24,7 @@ export class SceneManager {
   setupCamera() {
     this.idealRatio = 16 / 9;
     this.ratioOverflow = 0;
-    this.initialCameraPosition = new THREE.Vector3(1.4, 0.5, 3.5);
+    this.initialCameraPosition = new THREE.Vector3(1.4, 0.5, 5.5);
     this.baseMaxDistance = 5;
 
     this.parallaxAmplitude = 0.2;

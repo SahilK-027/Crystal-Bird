@@ -1,19 +1,19 @@
-# Crystal Bird
+# Crystal Horse
 
 GPGPU Particles -> Flowfield Animation -> Unreal Bloom -> Chromatic Aberration -> Film Grain -> Motion Blur
 
 <img width="100%" height="100%" src="./preview.png" />
 
-[🚀 Live Demo](https://crystal-bird.vercel.app/)
+[🚀 Live Demo](https://crystal-horse.vercel.app/)
 
-An immersive 3D experience featuring a crystalline bird surrounded by dynamic flowfield particles, sparkle effects, and atmospheric environments. Built with Three.js and custom GLSL shaders for high-performance real-time graphics.
+An immersive 3D experience featuring a crystalline horse surrounded by dynamic flowfield particles, sparkle effects, and atmospheric environments. Built with Three.js and custom GLSL shaders for high-performance real-time graphics.
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/SahilK-027/Crystal-Bird.git
-cd crystal-bird
+git clone https://github.com/SahilK-027/Crystal-Horse.git
+cd crystal-horse
 
 # Install dependencies
 npm install
@@ -44,7 +44,7 @@ This project is for educational and demonstration purposes.
 
 ## 🙏 Credits
 
-- **3D Model**: [Bee Eater](https://sketchfab.com/3d-models/bee-eater-7d9d998d873248ed9a0179b752bdf472) by [muzea.malopolska](https://sketchfab.com/muzea.malopolska)
+- **3D Model**: [Animated Horse – 3D Animal Model](https://skfb.ly/pECzn) by [ToonMesh 3D](https://sketchfab.com/ToonMesh3D) is licensed under [Creative Commons Attribution](http://creativecommons.org/licenses/by/4.0/)
 - **Music by**: [Metriko](https://pixabay.com/users/metriko-51027196/)
 - **Created by**: [SahilK-027](https://github.com/SahilK-027)
 

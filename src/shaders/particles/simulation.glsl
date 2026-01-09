@@ -69,7 +69,8 @@ uniform sampler2D uBase;
 uniform float uInfluence;
 uniform float uStrength;
 uniform float uFrequency;
-uniform vec3 uBirdPosition;
+uniform vec3 uHorsePosition;
+uniform float uSpeedX;
 
 void main() {
   float time = uTime * 0.2;
@@ -89,12 +90,15 @@ void main() {
     flowField = normalize(flowField);
     particle.xyz += flowField * uDeltaTime * strength * uStrength;
 
+    // Speed effect: move particles from -X to +X direction (trailing behind horse)
+    particle.x += uDeltaTime * uSpeedX;
+
     particle.y += uDeltaTime * 0.05;
 
-    vec3 toBird = uBirdPosition - particle.xyz;
-    float distToBird = length(toBird);
-    vec3 tangent = cross(toBird, vec3(0.0, 1.0, 0.0));
-    particle.xyz += normalize(tangent) * uDeltaTime * 0.08 * (1.0 / max(distToBird, 0.5));
+    vec3 toHorse = uHorsePosition - particle.xyz;
+    float distToHorse = length(toHorse);
+    vec3 tangent = cross(toHorse, vec3(0.0, 1.0, 0.0));
+    particle.xyz += normalize(tangent) * uDeltaTime * 0.08 * (1.0 / max(distToHorse, 0.5));
 
     particle.a += uDeltaTime * 0.3;
   }

@@ -6,8 +6,8 @@ import { ShaderMaterialManager } from './managers/ShaderMaterialManager.js';
 import { PostProcessingManager } from './managers/PostProcessingManager.js';
 import { ModelLoader } from './loaders/ModelLoader.js';
 import { SparkleParticleSystem } from './particles/SparkleParticleSystem.js';
-import { CrystallineBranches } from './environment/CrystallineBranches.js';
 import { CloudBackground } from './environment/CloudBackground.js';
+import { ReflectiveGround } from './environment/ReflectiveGround.js';
 import { GUIManager } from './gui/GUIManager.js';
 import { PerformanceMonitor } from './debug/PerformanceMonitor.js';
 import { AudioManager } from './managers/AudioManager.js';
@@ -29,8 +29,12 @@ export class Application {
     this.mouseManager = new MouseManager();
     this.shaderMaterialManager = new ShaderMaterialManager();
     this.sparkleSystem = new SparkleParticleSystem(this.sceneManager.scene);
-    this.crystallineBranches = new CrystallineBranches(this.sceneManager.scene);
     this.cloudBackground = new CloudBackground(this.sceneManager.scene);
+    this.reflectiveGround = new ReflectiveGround(
+      this.sceneManager.scene,
+      this.sceneManager.renderer,
+      this.sceneManager.camera
+    );
 
     this.postProcessing = new PostProcessingManager(
       this.sceneManager.scene,
@@ -64,7 +68,7 @@ export class Application {
 
     this.audioManager = new AudioManager(this.loadingManager.get(), false);
 
-    this.modelLoader.load('/models/bird.glb', (flowfieldSystem) => {
+    this.modelLoader.load('/models/horse.glb', (flowfieldSystem) => {
       if (flowfieldSystem) {
         this.guiManager.addFlowfieldControls(flowfieldSystem);
       }
@@ -72,7 +76,6 @@ export class Application {
       this.initializeAllSystems();
     });
 
-    this.guiManager.addTreeControls(this.crystallineBranches);
     this.guiManager.addCloudControls(this.cloudBackground);
 
     this.setupResizeHandler();
@@ -129,10 +132,13 @@ export class Application {
     this.mouseManager.update();
     this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
     this.sparkleSystem.update(elapsedTime);
-    this.crystallineBranches.update(elapsedTime);
     this.cloudBackground.update(elapsedTime, scaledDelta);
+    this.reflectiveGround.update(elapsedTime);
     this.postProcessing.update(elapsedTime, this.mouseManager.mouseVelocity);
     this.sceneManager.update(this.mouseManager, scaledDelta);
+
+    // Update model animations with scaled time
+    this.modelLoader.update(scaledDelta);
 
     const flowfieldSystem = this.modelLoader.getFlowfieldSystem();
     if (flowfieldSystem) {
@@ -170,6 +176,10 @@ export class Application {
         this.sceneManager.sizes.width,
         this.sceneManager.sizes.height
       );
+      this.reflectiveGround.handleResize(
+        this.sceneManager.sizes.width,
+        this.sceneManager.sizes.height
+      );
     };
   }
 
@@ -183,7 +193,6 @@ export class Application {
     this.mouseManager.update();
     this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
     this.sparkleSystem.update(elapsedTime);
-    this.crystallineBranches.update(elapsedTime);
     this.cloudBackground.update(elapsedTime, deltaTime);
     this.postProcessing.update(elapsedTime, this.mouseManager.mouseVelocity);
     this.sceneManager.update(this.mouseManager, deltaTime);

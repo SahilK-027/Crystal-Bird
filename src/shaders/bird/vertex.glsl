@@ -12,6 +12,8 @@ varying vec3 vNormal;
 varying float vDisplacement;
 varying vec3 vPosition;
 varying vec3 vVertexColor;
+
+#include <skinning_pars_vertex>
 #include noise.glsl;
 
 const float PI = 3.14159265359;
@@ -22,13 +24,21 @@ float backOut(float pregress, float swing) {
 }
 
 void main() {
+    #include <skinbase_vertex>
+    
     vUv = uv;
     vNormal = normal;
-    vPosition = position;
     vVertexColor = vertexColor;
 
+    // Apply skinning to position using Three.js built-in
+    vec3 transformed = vec3(position);
+    
+    #include <skinning_vertex>
+    
+    vPosition = transformed;
+
     float scale = uTriScale + sin(uTime * 0.5) * 0.02;
-    vec3 pos = (position - center) * scale + center;
+    vec3 pos = transformed;
 
     float wave = sin(pos.y * 5.0 + uTime) * 0.005;
     pos.x += wave;
@@ -53,7 +63,7 @@ void main() {
 
     pos += modelPush * mouseInfluence * 0.5;
 
-    float transformStart = -(position.z * 0.5 + 0.5) * 4.0;
+    float transformStart = -(transformed.z * 0.5 + 0.5) * 4.0;
     float transformProgress = backOut(clamp(uProgress * 5.0 + transformStart, 0.0, 1.0), 5.0);
 
     vec3 posPixelated = floor(pos * uMosaic + 0.5) / uMosaic;

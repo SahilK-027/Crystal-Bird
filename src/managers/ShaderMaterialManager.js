@@ -7,19 +7,23 @@ export class ShaderMaterialManager {
     this.material = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
-      uniforms: {
-        uTime: { value: 0.0 },
-        uTriScale: { value: 0.7 },
-        uMosaic: { value: 27.0 },
-        uProgress: { value: 1.0 },
-        uMousePosition: { value: new THREE.Vector2(0, 0) },
-        uMouseVelocity: { value: new THREE.Vector2(0, 0) },
-        uHover: { value: 0.0 },
-        uTexture: { value: null },
-        uHasTexture: { value: false },
-        uGlowColor: { value: new THREE.Color(0x186dec) },
-        uAccentColor: { value: new THREE.Color(0x20558d) },
-      },
+      uniforms: THREE.UniformsUtils.merge([
+        THREE.UniformsLib.common,
+        THREE.UniformsLib.skinning,
+        {
+          uTime: { value: 0.0 },
+          uTriScale: { value: 0.7 },
+          uMosaic: { value: 27.0 },
+          uProgress: { value: 1.0 },
+          uMousePosition: { value: new THREE.Vector2(0, 0) },
+          uMouseVelocity: { value: new THREE.Vector2(0, 0) },
+          uHover: { value: 0.0 },
+          uTexture: { value: null },
+          uHasTexture: { value: false },
+          uGlowColor: { value: new THREE.Color(0x186dec) },
+          uAccentColor: { value: new THREE.Color(0x20558d) },
+        }
+      ]),
     });
   }
 

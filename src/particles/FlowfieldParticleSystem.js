@@ -5,9 +5,9 @@ import flowfieldVertexShader from '../shaders/particles/flowfield.vert.glsl';
 import flowfieldFragmentShader from '../shaders/particles/flowfield.frag.glsl';
 
 export class FlowfieldParticleSystem {
-  constructor(birdVertices, birdMesh, scene, renderer) {
-    this.birdVertices = birdVertices;
-    this.birdMesh = birdMesh;
+  constructor(horseVertices, horseMesh, scene, renderer) {
+    this.horseVertices = horseVertices;
+    this.horseMesh = horseMesh;
     this.scene = scene;
     this.renderer = renderer;
 
@@ -41,9 +41,10 @@ export class FlowfieldParticleSystem {
     this.positionVariable.material.uniforms.uDeltaTime = { value: 0 };
     this.positionVariable.material.uniforms.uBase = { value: dtPosition };
     this.positionVariable.material.uniforms.uInfluence = { value: 0.95 };
-    this.positionVariable.material.uniforms.uStrength = { value: 0.65 };
+    this.positionVariable.material.uniforms.uStrength = { value: 0.5 };
     this.positionVariable.material.uniforms.uFrequency = { value: 1.0 };
-    this.positionVariable.material.uniforms.uBirdPosition = {
+    this.positionVariable.material.uniforms.uSpeedX = { value: 1.5 };
+    this.positionVariable.material.uniforms.uHorsePosition = {
       value: new THREE.Vector3(0, -0.2, 0),
     };
 
@@ -62,10 +63,22 @@ export class FlowfieldParticleSystem {
 
   fillInitialPositions(dtPosition) {
     const posArray = dtPosition.image.data;
-    const particleSpacing = 1.2;
+    const particleSpacing = 0.8;
+    
+    if (!this.horseVertices || this.horseVertices.length === 0) {
+      console.error('No horse vertices available for particle initialization');
+      for (let k = 0; k < posArray.length; k += 4) {
+        posArray[k + 0] = (Math.random() - 0.5) * 2;
+        posArray[k + 1] = (Math.random() - 0.5) * 2 - 2;
+        posArray[k + 2] = (Math.random() - 0.5) * 2;
+        posArray[k + 3] = Math.random();
+      }
+      return;
+    }
+    
     for (let k = 0; k < posArray.length; k += 4) {
       const vertex =
-        this.birdVertices[Math.floor(Math.random() * this.birdVertices.length)];
+        this.horseVertices[Math.floor(Math.random() * this.horseVertices.length)];
       posArray[k + 0] = vertex.x + (Math.random() - 0.5) * particleSpacing;
       posArray[k + 1] = vertex.y + (Math.random() - 0.5) * particleSpacing;
       posArray[k + 2] = vertex.z + (Math.random() - 0.5) * particleSpacing;
@@ -112,8 +125,8 @@ export class FlowfieldParticleSystem {
   update(deltaTime, elapsedTime) {
     this.positionVariable.material.uniforms.uTime.value = elapsedTime;
     this.positionVariable.material.uniforms.uDeltaTime.value = deltaTime;
-    this.positionVariable.material.uniforms.uBirdPosition.value.copy(
-      this.birdMesh.position
+    this.positionVariable.material.uniforms.uHorsePosition.value.copy(
+      this.horseMesh.position
     );
 
     this.gpuCompute.compute();

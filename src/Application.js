@@ -127,7 +127,7 @@ export class Application {
     const scaledDelta = deltaTime * timeScale;
 
     this.mouseManager.update();
-    this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
+    this.shaderMaterialManager.update(elapsedTime, this.mouseManager, this.sceneManager.parallaxOffset);
     this.sparkleSystem.update(elapsedTime);
     this.crystallineBranches.update(elapsedTime);
     this.cloudBackground.update(elapsedTime, scaledDelta);
@@ -181,7 +181,7 @@ export class Application {
     this.lastTime = elapsedTime;
 
     this.mouseManager.update();
-    this.shaderMaterialManager.update(elapsedTime, this.mouseManager);
+    this.shaderMaterialManager.update(elapsedTime, this.mouseManager, this.sceneManager.parallaxOffset);
     this.sparkleSystem.update(elapsedTime);
     this.crystallineBranches.update(elapsedTime);
     this.cloudBackground.update(elapsedTime, deltaTime);

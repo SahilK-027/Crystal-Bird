@@ -29,6 +29,7 @@ export class SceneManager {
 
     this.parallaxAmplitude = 0.2;
     this.parallaxEasingSpeed = 10;
+    this.parallaxOffset = new THREE.Vector2(0, 0);
 
     this.cameraGroup = new THREE.Group();
     this.scene.add(this.cameraGroup);
@@ -135,6 +136,14 @@ export class SceneManager {
         (parallaxY - this.cameraGroup.position.y) *
         this.parallaxEasingSpeed *
         deltaTime;
+
+      const fov = this.camera.fov * (Math.PI / 180);
+      const distance = this.camera.position.length();
+      const height = 2 * Math.tan(fov / 2) * distance;
+      const width = height * this.camera.aspect;
+      
+      this.parallaxOffset.x = (this.cameraGroup.position.x / width) * 2;
+      this.parallaxOffset.y = (this.cameraGroup.position.y / height) * 2;
     }
   }
 }

@@ -19,11 +19,12 @@ export class ShaderMaterialManager {
         uHasTexture: { value: false },
         uGlowColor: { value: new THREE.Color(0x186dec) },
         uAccentColor: { value: new THREE.Color(0x20558d) },
+        uParallaxOffset: { value: new THREE.Vector2(0, 0) },
       },
     });
   }
 
-  update(elapsedTime, mouseManager) {
+  update(elapsedTime, mouseManager, parallaxOffset) {
     this.material.uniforms.uTime.value = elapsedTime;
     this.material.uniforms.uMousePosition.value =
       mouseManager.smoothedMousePosition;
@@ -33,5 +34,8 @@ export class ShaderMaterialManager {
       mouseManager.hover,
       0.1
     );
+    if (parallaxOffset) {
+      this.material.uniforms.uParallaxOffset.value.copy(parallaxOffset);
+    }
   }
 }

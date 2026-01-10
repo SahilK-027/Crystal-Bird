@@ -5,6 +5,7 @@ uniform float uTime;
 uniform vec2 uMousePosition;
 uniform float uHover;
 uniform vec2 uMouseVelocity;
+uniform vec2 uParallaxOffset;
 attribute vec3 center;
 attribute vec3 vertexColor;
 varying vec2 vUv;
@@ -40,7 +41,8 @@ void main() {
     vec4 clipPos = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
     vec2 ndcPos = clipPos.xy / clipPos.w;
 
-    vec2 mouseDelta2D = uMousePosition - ndcPos;
+    vec2 adjustedMousePos = uMousePosition - uParallaxOffset;
+    vec2 mouseDelta2D = adjustedMousePos - ndcPos;
     float mouseDistance = length(mouseDelta2D);
 
     float mouseInfluence = smoothstep(0.15, 0.0, mouseDistance);
